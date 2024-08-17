@@ -105,17 +105,17 @@ class MPConfig {
             }
         }
 
-    val userName: String?
+    val userName: String
         get() {
             synchronized(lock) {
-                return configStorage?.username
+                return configStorage?.username ?: ""
             }
         }
 
-    val password: String?
+    val password: String
         get() {
             synchronized(lock) {
-                return configStorage?.password
+                return configStorage?.password ?: ""
             }
         }
 }
