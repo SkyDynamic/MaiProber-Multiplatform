@@ -25,6 +25,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()
     }
 }
 
@@ -35,3 +36,4 @@ plugins {
 rootProject.name = "maimaiDX-prober"
 include(":app")
 include(":common")
+include(":android_stub")

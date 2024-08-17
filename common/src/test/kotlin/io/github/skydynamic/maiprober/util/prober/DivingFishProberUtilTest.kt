@@ -28,7 +28,7 @@ class DivingFishProberUtilTest {
     data class LoginResponse(val errcode: Int? = null, val message: String)
 
     @Test
-    fun verifyProberAccount() = runBlocking {
+    fun validateProberAccount() = runBlocking {
         val resp: HttpResponse = client.post("https://www.diving-fish.com/api/maimaidxprober/login") {
             headers {
                 append(HttpHeaders.ContentType, "application/json;charset=UTF-8")
