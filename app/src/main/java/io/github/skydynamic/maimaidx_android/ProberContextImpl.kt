@@ -19,7 +19,7 @@ class ProberContextImpl : ProberContext {
 
     }
 
-    override fun readConfig(): ConfigStorage {
+    override fun requireConfig(): ConfigStorage {
         TODO("Not yet implemented")
     }
 

@@ -8,6 +8,6 @@ data class ConfigStorage(
     val proxyPort: Int = 2560,
     val useSsl: Boolean = false,
     val platform: ProberPlatform = ProberPlatform.DIVING_FISH,
-    val username: String = "",
+    val userName: String = "",
     val password: String = ""
 )

@@ -6,21 +6,21 @@ import kotlinx.coroutines.runBlocking
 
 class Prober(private val context:ProberContext) {
 
-    private val config = context.readConfig()
-    private var proxyServer = ProxyServer(config.proxyPort)
+    private val config = context.requireConfig()
+    private var proxyServer = ProxyServer(context)
     private lateinit var prob:ProberUtil
 
     fun validateAccount():Boolean {
         prob = config.platform.factory()
         return runBlocking{
-            return@runBlocking prob.validateProberAccount(config.username, config.password)
+            return@runBlocking prob.validateProberAccount(config.userName, config.password)
         }
     }
 
     fun stopProxy() {
         proxyServer.interrupt()
         proxyServer.join()
-        proxyServer = ProxyServer(config.proxyPort)
+        proxyServer = ProxyServer(context)
     }
 
     fun startProxy(): Thread {

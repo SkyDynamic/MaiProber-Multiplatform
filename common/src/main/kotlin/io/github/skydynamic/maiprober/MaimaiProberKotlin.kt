@@ -6,6 +6,7 @@ import io.github.skydynamic.maiprober.util.config.ConfigStorage
 import io.github.skydynamic.maiprober.util.prober.ProberPlatform
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import kotlin.system.exitProcess
 import io.github.skydynamic.maiprober.util.config.Config.configStorage as config
 
 
@@ -19,7 +20,7 @@ fun main() {
             LOGGER.info(content)
         }
 
-        override fun readConfig(): ConfigStorage {
+        override fun requireConfig(): ConfigStorage {
             return config
         }
 
@@ -33,7 +34,10 @@ fun main() {
 
     }
     val instance = Prober(ctx)
-    instance.validateAccount()
+    if(!instance.validateAccount()){
+        LOGGER.error("无效的登录凭据")
+        exitProcess(1)
+    }
     instance.startProxy()
     instance.join()
 }

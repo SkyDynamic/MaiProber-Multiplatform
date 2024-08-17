@@ -24,6 +24,7 @@ object Config {
             }
         }catch (e:Exception){
             e.printStackTrace()
+            configStorage = ConfigStorage()
             write()
         }
     }

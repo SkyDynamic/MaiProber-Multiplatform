@@ -6,7 +6,7 @@ import io.github.skydynamic.maiprober.util.prober.ProberPlatform
 interface ProberContext {
 
     fun sendNotification(title: String, content: String)
-    fun readConfig(): ConfigStorage
+    fun requireConfig(): ConfigStorage
     fun pasteToClipboard(content: String)
 
     fun getProberPlatform():ProberPlatform

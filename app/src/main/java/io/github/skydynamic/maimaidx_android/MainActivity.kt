@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     private val contextImpl = ProberContextImpl()
     private var prober = Prober(contextImpl)
     private val config
-        get() = contextImpl.readConfig()
+        get() = contextImpl.requireConfig()
 
     private val onRequestPermissionResultListener =
         OnRequestPermissionResultListener { requestCode, grantResult ->
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
         }
         state = ApplicationState.STOP
         contextImpl.load(this)
-        binding.textUsername.setText(config.username)
+        binding.textUsername.setText(config.userName)
         binding.textPassword.setText(config.password)
         if (ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
