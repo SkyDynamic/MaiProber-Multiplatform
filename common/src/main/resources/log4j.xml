@@ -16,24 +16,6 @@
 		<appender-ref ref="SysOut"/>
 	</appender>
 
-	<appender name="LatestFile" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="logs/latest.log"/>
-		<param name="MaxFileSize" value="10MB"/>
-		<param name="MaxBackupIndex" value="10"/>
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="[%d{HH:mm:ss}] [%t/%p] (%c{1}) %m%n"/>
-		</layout>
-	</appender>
-
-	<appender name="DebugFile" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="logs/debug.log"/>
-		<param name="MaxFileSize" value="200MB"/>
-		<param name="MaxBackupIndex" value="5"/>
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="[%d{HH:mm:ss}] [%t/%p] (%c) %m%n"/>
-		</layout>
-	</appender>
-
 	<logger name="io.github.skydynamic.maiprober" additivity="false">
 		<level value="INFO"/>
 		<appender-ref ref="SysOut"/>

@@ -37,3 +37,4 @@ rootProject.name = "maimaiDX-prober"
 include(":app")
 include(":common")
 include(":android_stub")
+include(":windows")
