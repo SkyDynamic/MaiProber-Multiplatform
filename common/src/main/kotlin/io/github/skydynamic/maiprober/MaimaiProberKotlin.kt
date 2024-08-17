@@ -1,6 +1,7 @@
 package io.github.skydynamic.maiprober
 
 import io.github.skydynamic.maiprober.util.ClipDataUtil
+import io.github.skydynamic.maiprober.util.ScannerUtil
 import io.github.skydynamic.maiprober.util.config.Config
 import io.github.skydynamic.maiprober.util.config.ConfigStorage
 import io.github.skydynamic.maiprober.util.prober.ProberPlatform
@@ -34,10 +35,8 @@ fun main() {
 
     }
     val instance = Prober(ctx)
-    if(!instance.validateAccount()){
-        LOGGER.error("无效的登录凭据")
-        exitProcess(1)
-    }
+    ScannerUtil.start(instance)
+
     instance.startProxy()
     instance.join()
 }

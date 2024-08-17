@@ -50,9 +50,10 @@ fun Application.configureRouting(context: ProberContext) {
         try {
             val uri = URI(requestUrl)
             if (uri.scheme.equals("http")) {
-                if (uri.host.equals("tgk-wcaime.wahlap.com"))
+                if (uri.host.equals("tgk-wcaime.wahlap.com")) {
                     call.respondRedirect("http://127.0.0.1:${context.requireConfig().proxyPort}/success")
-                InterceptHandler.onAuthHook(uri, context.requireConfig())
+                    InterceptHandler.onAuthHook(uri, context.requireConfig())
+                }
             } else
                 call.respond(HttpStatusCode.BadRequest, "Invalid URL")
             return@intercept

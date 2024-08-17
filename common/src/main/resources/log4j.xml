@@ -22,7 +22,7 @@
 	</logger>
 
 	<root>
-		<priority value="ALL"/>
+		<priority value="INFO"/>
 		<appender-ref ref="DebugFile"/>
 		<appender-ref ref="LatestFile"/>
 		<appender-ref ref="ServerGuiConsole"/>
