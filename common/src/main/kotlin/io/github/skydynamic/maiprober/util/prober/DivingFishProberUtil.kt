@@ -53,9 +53,6 @@ class DivingFishProberUtil : ProberUtil {
         }
 
         val cookies = loginResp.setCookie()
-        cookies.forEach {
-            println(it.name to it.value)
-        }
         jwtToken = cookies.find { it.name == "jwt_token" } ?: return false
         return true
     }
