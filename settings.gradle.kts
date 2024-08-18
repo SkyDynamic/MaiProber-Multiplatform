@@ -34,7 +34,7 @@ plugins {
 }
 
 rootProject.name = "maimaiDX-prober"
-include(":app")
+include(":androidApp")
 include(":common")
 include(":android_stub")
 include(":windows")

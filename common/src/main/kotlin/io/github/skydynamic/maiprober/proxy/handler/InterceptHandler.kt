@@ -19,7 +19,7 @@ object InterceptHandler {
                 if (target.contains("maimai-dx")) {
                     proberUtil.uploadMaimaiProberData(config.userName, config.password, target)
                 } else if (target.contains("chunithm")) {
-                    proberUtil.updaloadChunithmProberData(config.userName, config.password, target)
+                    proberUtil.uploadChunithmProberData(config.userName, config.password, target)
                 }
             } else {
                 logger.error("Prober账号密码错误")

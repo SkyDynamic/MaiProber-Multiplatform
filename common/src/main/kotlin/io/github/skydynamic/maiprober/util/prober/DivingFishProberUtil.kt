@@ -124,7 +124,7 @@ class DivingFishProberUtil : ProberUtil {
         logger.info("Maimai 成绩上传到 Diving-Fish 查分器数据库完毕")
     }
 
-    override suspend fun updaloadChunithmProberData(username: String, password: String, authUrl: String) {
+    override suspend fun uploadChunithmProberData(username: String, password: String, authUrl: String) {
         logger.info("开始更新Chunithm成绩")
 
         logger.info("登录Chunithm主页...")
