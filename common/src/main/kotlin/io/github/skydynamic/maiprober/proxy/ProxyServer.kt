@@ -11,11 +11,7 @@ import io.ktor.server.netty.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.slf4j.LoggerFactory
-import org.slf4j.Logger
 import java.net.URI
-
-val logger: Logger = LoggerFactory.getLogger("MaiProber-Proxy")
 
 class ProxyServer(private val context: ProberContext) : Thread() {
 

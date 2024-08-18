@@ -16,7 +16,11 @@ object InterceptHandler {
         if (config.platform == ProberPlatform.DIVING_FISH) {
             val proberUtil = DivingFishProberUtil()
             if (proberUtil.validateProberAccount(config.userName, config.password)) {
-                proberUtil.uploadMaimaiProberData(config.userName, config.password, target)
+                if (target.contains("maimai-dx")) {
+                    proberUtil.uploadMaimaiProberData(config.userName, config.password, target)
+                } else if (target.contains("chunithm")) {
+                    proberUtil.updaloadChunithmProberData(config.userName, config.password, target)
+                }
             } else {
                 logger.error("Prober账号密码错误")
             }
