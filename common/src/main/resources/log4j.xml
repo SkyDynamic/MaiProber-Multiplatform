@@ -23,8 +23,6 @@
 
 	<root>
 		<priority value="INFO"/>
-		<appender-ref ref="DebugFile"/>
-		<appender-ref ref="LatestFile"/>
 		<appender-ref ref="ServerGuiConsole"/>
 	</root>
 </log4j:configuration>

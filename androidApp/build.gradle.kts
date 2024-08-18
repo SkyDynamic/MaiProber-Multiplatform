@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.compose.compiler)
     id("dev.rikka.tools.materialthemebuilder") version "1.3.3"
 }
 
@@ -18,7 +17,12 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    packaging {
+        resources.excludes += listOf(
+            "META-INF/INDEX.LIST",
+            "META-INF/io.netty.versions.properties"
+        )
+    }
     buildTypes {
         release {
             isMinifyEnabled = false

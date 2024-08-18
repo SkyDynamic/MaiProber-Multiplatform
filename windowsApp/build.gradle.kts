@@ -14,10 +14,12 @@ version = "1.0-SNAPSHOT"
 dependencies {
     implementation(project(":common"))
     implementation(libs.jna)
-    implementation("net.java.dev.jna:jna-platform:5.14.0")
+    implementation(libs.jna.platform)
 
+    implementation(compose.components.resources)
     implementation(libs.coil.compose)
     implementation(compose.desktop.currentOs)
+    implementation(compose.material3)
 }
 
 tasks.test {
