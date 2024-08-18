@@ -20,15 +20,6 @@ pluginManagement {
     }
 }
 
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-        mavenLocal()
-    }
-}
-
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
@@ -37,4 +28,4 @@ rootProject.name = "maimaiDX-prober"
 include(":androidApp")
 include(":common")
 include(":android_stub")
-include(":windows")
+include(":windowsApp")
