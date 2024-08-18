@@ -20,9 +20,7 @@ class OauthLocationsHandler {
                 if (OauthTokenUtil.validateToken(token, context.requireConfig().secretKey)) {
                     when (type) {
                         "maimai-dx" -> {
-                            val url = WechatRequestUtil.getAuthUrl("maimai-dx")
-                            println(url)
-                            call.respondRedirect(url)
+                            call.respondRedirect(WechatRequestUtil.getAuthUrl("maimai-dx"))
                         }
                         "chunithm" -> {
                             call.respondRedirect(WechatRequestUtil.getAuthUrl("chunithm"))
