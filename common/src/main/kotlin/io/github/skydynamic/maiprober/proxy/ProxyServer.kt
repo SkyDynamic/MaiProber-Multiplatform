@@ -1,10 +1,12 @@
 package io.github.skydynamic.maiprober.proxy
 
 import io.github.skydynamic.maiprober.ProberContext
-import io.github.skydynamic.maiprober.util.prober.InterceptHandler
+import io.github.skydynamic.maiprober.proxy.handler.InterceptHandler
+import io.github.skydynamic.maiprober.proxy.handler.OauthLocationsHandler
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
+import io.ktor.server.locations.*
 import io.ktor.server.netty.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -40,11 +42,14 @@ class ProxyServer(private val context: ProberContext) : Thread() {
     }
 }
 
+@OptIn(KtorExperimentalLocationsAPI::class)
 fun Application.module(context: ProberContext) {
+    install(Locations)
+    configureIntercept(context)
     configureRouting(context)
 }
 
-fun Application.configureRouting(context: ProberContext) {
+fun Application.configureIntercept(context: ProberContext) {
     intercept(ApplicationCallPipeline.Call) {
         val requestUrl = call.request.uri
         try {
@@ -60,7 +65,14 @@ fun Application.configureRouting(context: ProberContext) {
         } catch (_: Exception) {
         }
     }
+}
+
+@OptIn(KtorExperimentalLocationsAPI::class)
+fun Application.configureRouting(context: ProberContext) {
     routing {
+        get<LocationsData.Oauth> { oauth ->
+            OauthLocationsHandler.handle(context, call, oauth.type, oauth.token)
+        }
         get("/success") {
             call.respond(HttpStatusCode.OK, "查询完成，请返回查分器查看")
         }

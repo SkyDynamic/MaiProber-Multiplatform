@@ -4,6 +4,7 @@ api = "13.1.5"
 gson = "2.11.0"
 hiddenapibypass = "4.3"
 jna = "5.14.0"
+jjwtApi = "0.11.2"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -26,6 +27,9 @@ api = { module = "dev.rikka.shizuku:api", version.ref = "api" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 hiddenapibypass = { module = "org.lsposed.hiddenapibypass:hiddenapibypass", version.ref = "hiddenapibypass" }
 jna = { module = "net.java.dev.jna:jna", version.ref = "jna" }
+jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwtApi" }
+jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwtApi" }
+jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwtApi" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -37,6 +41,7 @@ ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorServe
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorServerCore" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorServerCore" }
 ktor-client-serialization-jvm = { module = "io.ktor:ktor-client-serialization-jvm", version.ref = "ktorServerCore" }
+ktor-ktor-server-locations = { module = "io.ktor:ktor-server-locations", version.ref = "ktorServerCore" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorServerCore" }
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktorServerCore" }
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktorServerCore" }

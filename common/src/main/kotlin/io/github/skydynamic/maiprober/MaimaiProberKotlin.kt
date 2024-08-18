@@ -7,15 +7,14 @@ import io.github.skydynamic.maiprober.util.config.ConfigStorage
 import io.github.skydynamic.maiprober.util.prober.ProberPlatform
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import kotlin.system.exitProcess
 import io.github.skydynamic.maiprober.util.config.Config.configStorage as config
 
 
 val LOGGER: Logger = LoggerFactory.getLogger("MaimaiDX-Prober-Kotlin")
 
 fun main() {
+    LOGGER.info("Initialize config")
     Config.read()
-    LOGGER.info("Initialize http proxy server...")
     val ctx = object :ProberContext{
         override fun sendNotification(title: String, content: String) {
             LOGGER.info(content)
@@ -35,8 +34,9 @@ fun main() {
 
     }
     val instance = Prober(ctx)
-    ScannerUtil.start(instance)
+    ScannerUtil.start(ctx, instance)
 
+    LOGGER.info("Initialize http proxy server...")
     instance.startProxy()
     instance.join()
 }
