@@ -4,4 +4,6 @@ interface Platform {
     fun setupSystemProxy(proxyUrl: String)
 
     fun rollbackSystemProxy()
+
+    fun openWechat()
 }

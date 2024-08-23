@@ -31,4 +31,8 @@ object AppPlatform : Platform {
     override fun rollbackSystemProxy() {
         delegate.rollbackSystemProxy()
     }
+
+    override fun openWechat() {
+        delegate.openWechat()
+    }
 }

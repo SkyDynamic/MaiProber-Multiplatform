@@ -13,8 +13,9 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
 
     // Logger
-    api(libs.slf4j.reload4j)
-
+    implementation(libs.log4j.core)
+    implementation(libs.log4j.slf4j2.impl)
+            
     // Gson
     implementation(libs.gson)
 

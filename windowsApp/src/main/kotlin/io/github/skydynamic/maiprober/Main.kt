@@ -17,15 +17,12 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import io.github.skydynamic.maiprober.compose.DivingFishCompose
 import io.github.skydynamic.maiprober.compose.SettingCompose
-import io.github.skydynamic.maiprober.util.MemoryAppender
 import io.github.skydynamic.maiprober.util.asIcon
 import io.github.skydynamic.windowsapp.generated.resources.*
 import kotlinx.coroutines.launch
-import org.apache.log4j.LogManager
 import org.jetbrains.skiko.hostOs
 import java.awt.Dimension
 
-private val logger = LogManager.getLogger("GUI")
 private var valueUpdater: (String) -> Unit = { }
 
 @Preview
@@ -147,11 +144,6 @@ fun mainComposable() {
 }
 
 fun main() {
-    LogManager.getRootLogger().also {
-        it.addAppender(MemoryAppender{ s ->
-            valueUpdater(s)
-        })
-    }
     application {
         Window(
             onCloseRequest = {

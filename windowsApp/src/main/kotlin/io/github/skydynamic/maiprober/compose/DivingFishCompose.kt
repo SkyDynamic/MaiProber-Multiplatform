@@ -132,7 +132,7 @@ fun DivingFishCompose(theme: ColorScheme) {
 
                 Button(
                     onClick = {
-                        ProcessBuilder().command("cmd.exe", "/c", "start", "weixin://").start()
+                        AppPlatform.openWechat()
                     }, // Only Windows
                     modifier = Modifier.width(290.dp).height(50.dp),
                 ) {

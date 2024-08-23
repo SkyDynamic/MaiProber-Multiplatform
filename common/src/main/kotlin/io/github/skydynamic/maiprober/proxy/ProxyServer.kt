@@ -4,9 +4,9 @@ import io.github.skydynamic.maiprober.ProberContext
 import io.github.skydynamic.maiprober.proxy.handler.InterceptHandler
 import io.github.skydynamic.maiprober.proxy.handler.OauthLocationsHandler
 import io.ktor.http.*
+import io.ktor.server.resources.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
-import io.ktor.server.locations.*
 import io.ktor.server.netty.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -19,13 +19,18 @@ class ProxyServer(private val context: ProberContext) : Thread() {
         name = "ProxyServer"
     }
 
-    private val server: NettyApplicationEngine = embeddedServer(
-        Netty,
-        port = context.requireConfig().proxyPort,
-        host = "0.0.0.0",
-        module = {
-            module(context)
-        }
+    private val server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> =
+        embeddedServer(
+            Netty,
+            configure = {
+                connector {
+                    port = context.requireConfig().proxyPort
+                    host = "0.0.0.0"
+                }
+            },
+            module = {
+                module(context)
+            }
     )
 
     override fun start() {
@@ -43,9 +48,8 @@ class ProxyServer(private val context: ProberContext) : Thread() {
     }
 }
 
-@OptIn(KtorExperimentalLocationsAPI::class)
 fun Application.module(context: ProberContext) {
-    install(Locations)
+    install(Resources)
     configureIntercept(context)
     configureRouting(context)
 }
@@ -68,10 +72,9 @@ fun Application.configureIntercept(context: ProberContext) {
     }
 }
 
-@OptIn(KtorExperimentalLocationsAPI::class)
 fun Application.configureRouting(context: ProberContext) {
     routing {
-        get<LocationsData.Oauth> { oauth ->
+        get<ResourcesData.Oauth> { oauth ->
             OauthLocationsHandler.handle(context, call, oauth.type, oauth.token)
         }
         get("/success") {
