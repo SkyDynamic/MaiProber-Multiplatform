@@ -17,9 +17,9 @@ dependencies {
     implementation(libs.jna.platform)
 
     implementation(compose.components.resources)
-    implementation(libs.coil.compose)
     implementation(compose.desktop.currentOs)
     implementation(compose.material3)
+    implementation(libs.coil.compose)
 }
 
 tasks.test {

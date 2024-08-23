@@ -11,7 +11,7 @@ class Prober(private val context:ProberContext) {
     private lateinit var prob:ProberUtil
 
     fun validateAccount():Boolean {
-        prob = config.platform.factory()
+        prob = config.platform.factory
         return runBlocking{
             return@runBlocking prob.validateProberAccount(config.userName, config.password)
         }

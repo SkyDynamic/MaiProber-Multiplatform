@@ -54,8 +54,8 @@ public class WindowsPlatformImpl implements Platform {
         }
         setStringValue("ProxyServer", proxyUrl);
         setDWORDValue("ProxyEnable", 1);
-        System.out.println("previousProxyUrl = " + previousProxyUrl);
-        System.out.println("previousProxyEnabled = " + previousProxyEnabled);
+        // System.out.println("previousProxyUrl = " + previousProxyUrl);
+        // System.out.println("previousProxyEnabled = " + previousProxyEnabled);
     }
 
     @Override

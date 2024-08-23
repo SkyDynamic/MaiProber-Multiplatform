@@ -2,6 +2,7 @@ package io.github.skydynamic.maiprober.util.prober
 
 import io.github.skydynamic.maiprober.Constant
 import io.github.skydynamic.maiprober.util.prober.interfact.ProberUtil
+import io.github.skydynamic.maiprober.util.singal.MaiproberSignal
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -42,6 +43,14 @@ class DivingFishProberUtil : ProberUtil {
     @Serializable
     data class LoginResponse(val errcode: Int? = null, val message: String)
 
+    private val updateStartedSignalBuilder = MaiproberSignal<String>()
+    private val updateFinishedSignalBuilder = MaiproberSignal<String>()
+
+    override val updateStartedSignal
+        get() = updateStartedSignalBuilder
+    override val updateFinishedSignal
+        get() = updateFinishedSignalBuilder
+
     override suspend fun validateProberAccount(username: String, password: String): Boolean {
         val loginResp = client.post(loginUrl) {
             contentType(ContentType.Application.Json)
@@ -72,6 +81,8 @@ class DivingFishProberUtil : ProberUtil {
         authUrl: String
     ) {
         logger.info("开始更新Maimai成绩")
+
+        updateStartedSignal.emit("开始更新Maimai成绩")
 
         logger.info("登录MaimaiDX主页...")
         client.get(authUrl) {
@@ -122,10 +133,13 @@ class DivingFishProberUtil : ProberUtil {
             diff += 1
         }
         logger.info("Maimai 成绩上传到 Diving-Fish 查分器数据库完毕")
+        updateFinishedSignal.emit("Maimai 成绩上传到 Diving-Fish 查分器数据库完毕")
     }
 
     override suspend fun uploadChunithmProberData(username: String, password: String, authUrl: String) {
         logger.info("开始更新Chunithm成绩")
+
+        updateStartedSignalBuilder.emit("开始更新Chunithm成绩")
 
         logger.info("登录Chunithm主页...")
         val result = client.get(authUrl) {
@@ -195,6 +209,7 @@ class DivingFishProberUtil : ProberUtil {
             diff += 1
         }
         logger.info("Chunithm 成绩上传到 Diving-Fish 查分器数据库完毕")
+        updateFinishedSignal.emit("Maimai 成绩上传到 Diving-Fish 查分器数据库完毕")
     }
 }
 

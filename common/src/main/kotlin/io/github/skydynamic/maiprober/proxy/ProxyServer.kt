@@ -30,11 +30,16 @@ class ProxyServer(private val context: ProberContext) : Thread() {
 
     override fun start() {
         try {
-            server.start(true)
+            server.start(false)
         } catch (e: Exception) {
             if (e !is InterruptedException)
                 e.printStackTrace()
         }
+    }
+
+    override fun interrupt() {
+        server.stop()
+        super.interrupt()
     }
 }
 

@@ -14,7 +14,7 @@ object InterceptHandler {
         val urlString = authUrl.toString()
         val target = urlString.replace("http", "https")
         if (config.platform == ProberPlatform.DIVING_FISH) {
-            val proberUtil = DivingFishProberUtil()
+            val proberUtil = config.platform.factory
             if (proberUtil.validateProberAccount(config.userName, config.password)) {
                 if (target.contains("maimai-dx")) {
                     proberUtil.uploadMaimaiProberData(config.userName, config.password, target)
