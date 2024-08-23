@@ -4,11 +4,17 @@ import io.github.skydynamic.maiprober.util.platform.Platform
 
 class MacOSPlatformImpl : Platform {
     override fun setupSystemProxy(proxyUrl: String) {
+
     }
 
     override fun rollbackSystemProxy() {
+
     }
 
     override fun openWechat() {
+        ProcessBuilder().command("open", "weixin://").start()
     }
+}
+
+fun main() {
 }

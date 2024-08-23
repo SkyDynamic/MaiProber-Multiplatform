@@ -4,11 +4,11 @@ import io.github.skydynamic.maiprober.ProberContext
 import io.github.skydynamic.maiprober.proxy.handler.InterceptHandler
 import io.github.skydynamic.maiprober.proxy.handler.OauthLocationsHandler
 import io.ktor.http.*
-import io.ktor.server.resources.*
 import io.ktor.server.application.*
+import io.ktor.server.cio.*
 import io.ktor.server.engine.*
-import io.ktor.server.netty.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.net.URI
@@ -19,9 +19,9 @@ class ProxyServer(private val context: ProberContext) : Thread() {
         name = "ProxyServer"
     }
 
-    private val server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> =
+        private val server: EmbeddedServer<CIOApplicationEngine, CIOApplicationEngine.Configuration> =
         embeddedServer(
-            Netty,
+            CIO,
             configure = {
                 connector {
                     port = context.requireConfig().proxyPort
