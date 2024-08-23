@@ -3,7 +3,9 @@ package io.github.skydynamic.maiprober.compose
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,11 +17,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import io.github.skydynamic.maiprober.AppPlatform
 import io.github.skydynamic.maiprober.MaimaiProberMain
 import io.github.skydynamic.maiprober.util.ClipDataUtil
 import io.github.skydynamic.maiprober.util.OauthTokenUtil
 import io.github.skydynamic.maiprober.util.asIcon
-import io.github.skydynamic.maiprober.util.platform.windows.WindowsPlatformImpl
 import io.github.skydynamic.windowsapp.generated.resources.Res
 import io.github.skydynamic.windowsapp.generated.resources.eye_hidden_24px
 import io.github.skydynamic.windowsapp.generated.resources.eye_show_24px
@@ -33,7 +35,6 @@ import kotlinx.coroutines.launch
 @OptIn(DelicateCoroutinesApi::class)
 fun DivingFishCompose(theme: ColorScheme) {
     val maimaiProberMain = MaimaiProberMain()
-    val wp = WindowsPlatformImpl()
 
     var proxyEnable by remember { mutableStateOf(false) }
     var username by remember{ mutableStateOf(maimaiProberMain.getConfig().userName)}
@@ -98,7 +99,7 @@ fun DivingFishCompose(theme: ColorScheme) {
                                     config.userName = username
                                     config.password = password
                                     maimaiProberMain.start()
-                                    wp.setupSystemProxy("127.0.0.1:${maimaiProberMain.getConfig().proxyPort}")
+                                    AppPlatform.setupSystemProxy("127.0.0.1:${maimaiProberMain.getConfig().proxyPort}")
                                 } else {
                                     accountVerifyResult = "登录失败, 可能的原因: \n1. 网络出现错误\n2.账号密码错误"
                                     openAccountVerifyResultDialog = true
@@ -113,7 +114,7 @@ fun DivingFishCompose(theme: ColorScheme) {
                                 }
                                 maimaiProberMain.saveConfig()
                                 maimaiProberMain.stop()
-                                wp.rollbackSystemProxy()
+                                AppPlatform.rollbackSystemProxy()
                             }
                         }
                     },

@@ -12,20 +12,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import io.github.skydynamic.maiprober.compose.DivingFishCompose
 import io.github.skydynamic.maiprober.compose.SettingCompose
-import io.github.skydynamic.maiprober.util.platform.windows.WindowsPlatformImpl
 import io.github.skydynamic.maiprober.util.MemoryAppender
 import io.github.skydynamic.maiprober.util.asIcon
 import io.github.skydynamic.windowsapp.generated.resources.*
-import io.github.skydynamic.windowsapp.generated.resources.Res
-import io.github.skydynamic.windowsapp.generated.resources.dark_mode_24px
-import io.github.skydynamic.windowsapp.generated.resources.fish_icon_24px
-import io.github.skydynamic.windowsapp.generated.resources.light_mode_24px
 import kotlinx.coroutines.launch
 import org.apache.log4j.LogManager
 import org.jetbrains.skiko.hostOs
@@ -161,8 +155,7 @@ fun main() {
     application {
         Window(
             onCloseRequest = {
-                val wp = WindowsPlatformImpl()
-                wp.rollbackSystemProxy()
+                AppPlatform.rollbackSystemProxy()
                 exitApplication()
             },
             title = "MaimaiProber-MultiPlatform",
