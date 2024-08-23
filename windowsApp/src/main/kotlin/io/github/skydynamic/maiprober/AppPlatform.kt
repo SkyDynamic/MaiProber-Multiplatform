@@ -23,8 +23,8 @@ object AppPlatform : Platform {
     }
     private var proxySetup = false
 
-    override fun setupSystemProxy(proxyUrl: String) {
-        delegate.setupSystemProxy(proxyUrl)
+    override fun setupSystemProxy(proxyUrl: String, proxyPort: Int) {
+        delegate.setupSystemProxy(proxyUrl, proxyPort)
         proxySetup = true
     }
 

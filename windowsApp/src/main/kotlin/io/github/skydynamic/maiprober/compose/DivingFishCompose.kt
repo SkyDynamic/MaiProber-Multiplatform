@@ -37,7 +37,7 @@ fun DivingFishCompose(theme: ColorScheme) {
     val maimaiProberMain = MaimaiProberMain()
 
     var proxyEnable by remember { mutableStateOf(false) }
-    var username by remember{ mutableStateOf(maimaiProberMain.getConfig().userName)}
+    var username by remember { mutableStateOf(maimaiProberMain.getConfig().userName) }
     var password by remember { mutableStateOf(maimaiProberMain.getConfig().password) }
     var passwordHidden by mutableStateOf(false)
     var saveUsernameAndPassword by remember { mutableStateOf(true) }
@@ -58,16 +58,19 @@ fun DivingFishCompose(theme: ColorScheme) {
                     openCopySuccessDialog = false
                 }
             }
+
             openAccountVerifyResultDialog -> {
                 DialogCompose.infoDialog(accountVerifyResult) {
                     openAccountVerifyResultDialog = false
                 }
             }
+
             openUpdateScoreStartedDialog -> {
                 DialogCompose.infoDialog("更新成绩中, 请稍后") {
                     openUpdateScoreStartedDialog = false
                 }
             }
+
             openUpdateScoreFinishedDialog -> {
                 DialogCompose.infoDialog("更新成绩完成") {
                     openUpdateScoreFinishedDialog = false
@@ -99,7 +102,7 @@ fun DivingFishCompose(theme: ColorScheme) {
                                     config.userName = username
                                     config.password = password
                                     maimaiProberMain.start()
-                                    AppPlatform.setupSystemProxy("127.0.0.1:${maimaiProberMain.getConfig().proxyPort}")
+                                    AppPlatform.setupSystemProxy("127.0.0.1", maimaiProberMain.getConfig().proxyPort)
                                 } else {
                                     accountVerifyResult = "登录失败, 可能的原因: \n1. 网络出现错误\n2.账号密码错误"
                                     openAccountVerifyResultDialog = true
@@ -193,7 +196,7 @@ fun DivingFishCompose(theme: ColorScheme) {
                         onClick = {
                             passwordHidden = !passwordHidden
                         }
-                    ){
+                    ) {
                         if (!passwordHidden) Icon(
                             Res.drawable.eye_show_24px.asIcon(),
                             null,
@@ -211,7 +214,7 @@ fun DivingFishCompose(theme: ColorScheme) {
                 },
                 singleLine = true,
                 label = { Text("密码") },
-                visualTransformation = if(!passwordHidden) PasswordVisualTransformation() else VisualTransformation.None
+                visualTransformation = if (!passwordHidden) PasswordVisualTransformation() else VisualTransformation.None
             )
 
             Spacer(Modifier.height(15.dp))
@@ -261,8 +264,8 @@ fun DivingFishCompose(theme: ColorScheme) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(15.dp)
-                    .clickable{
-                        if (proxyEnable)  {
+                    .clickable {
+                        if (proxyEnable) {
                             ClipDataUtil.copyToClipboard(oauthUrl)
                             openCopySuccessDialog = true
                         }
@@ -272,7 +275,8 @@ fun DivingFishCompose(theme: ColorScheme) {
                     modifier = Modifier.padding(15.dp)
                 ) {
                     Text(buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.W900)
+                        withStyle(
+                            style = SpanStyle(fontWeight = FontWeight.W900)
                         ) {
                             append("Oauth链接 - 点击复制")
                         }

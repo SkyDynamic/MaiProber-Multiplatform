@@ -5,12 +5,13 @@ import com.sun.jna.platform.win32.Win32Exception
 import com.sun.jna.platform.win32.WinNT
 import com.sun.jna.platform.win32.WinReg
 import io.github.skydynamic.maiprober.util.platform.Platform
+import io.github.skydynamic.maiprober.util.runCommand
 
 class WindowsPlatformImpl : Platform {
     private var previousProxyUrl: String? = null
     private var previousProxyEnabled = false
 
-    override fun setupSystemProxy(proxyUrl: String) {
+    override fun setupSystemProxy(proxyUrl: String, proxyPort: Int) {
         previousProxyEnabled = getOrCreateDWORDValue("ProxyEnable", 0) != 0
         previousProxyUrl = try {
             Advapi32Util.registryGetStringValue(
@@ -21,7 +22,7 @@ class WindowsPlatformImpl : Platform {
         } catch (e: Win32Exception) {
             null
         }
-        setStringValue("ProxyServer", proxyUrl)
+        setStringValue("ProxyServer", "$proxyUrl:$proxyPort")
         setDWORDValue("ProxyEnable", 1)
         // System.out.println("previousProxyUrl = " + previousProxyUrl);
         // System.out.println("previousProxyEnabled = " + previousProxyEnabled);
@@ -35,7 +36,7 @@ class WindowsPlatformImpl : Platform {
     }
 
     override fun openWechat() {
-        ProcessBuilder().command("cmd", "/c", "start", "weixin://").start()
+        runCommand("cmd", "/c", "start", "weixin://")
     }
 
     companion object {
