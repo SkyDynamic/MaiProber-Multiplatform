@@ -1,5 +1,7 @@
 package io.github.skydynamic.maiprober
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -9,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -28,12 +29,16 @@ private var valueUpdater: (String) -> Unit = { }
 @Preview
 @Composable
 fun mainComposable() {
-    var logLines by remember { mutableStateOf(mutableListOf<String>()) }
     val darkDefault = isSystemInDarkTheme()
-    var isDarkTheme by remember { mutableStateOf(darkDefault) }
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scrollState = rememberScrollState(0)
     val coroutineScope = rememberCoroutineScope()
+    val selectedItem = remember {
+        mutableStateOf("diving_fish")
+    }
+    var pageIndex by remember { mutableStateOf(0) }
+    var logLines by remember { mutableStateOf(mutableListOf<String>()) }
+    var isDarkTheme by remember { mutableStateOf(darkDefault) }
     var theme: ColorScheme by remember {
         mutableStateOf(
             if (isDarkTheme) {
@@ -43,9 +48,11 @@ fun mainComposable() {
             }
         )
     }
-    var selectedItem = remember {
-        mutableStateOf("diving_fish")
-    }
+
+    val pages = listOf(
+        @Composable { DivingFishCompose(theme) },
+        @Composable { SettingCompose(theme) }
+    )
 
     valueUpdater = {
         logLines.add(it)
@@ -97,9 +104,11 @@ fun mainComposable() {
                             coroutineScope.launch {
                                 drawerState.close()
                             }
+                            pageIndex = 0
                             selectedItem.value = "diving_fish"
                         }
                     )
+
                     NavigationRailItem(
                         selected = selectedItem.value == "settings",
                         icon = {
@@ -114,18 +123,12 @@ fun mainComposable() {
                             coroutineScope.launch {
                                 drawerState.close()
                             }
+                            pageIndex = 1
                             selectedItem.value = "settings"
                         }
                     )
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .fillMaxHeight()
-                            .width(1.dp),
-                        thickness = 1.dp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-                    )
                 }
+
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -133,9 +136,14 @@ fun mainComposable() {
                         .fillMaxHeight()
                         .verticalScroll(scrollState)
                 ) {
-                    when (selectedItem.value) {
-                        "diving_fish" -> DivingFishCompose(theme)
-                        "settings" -> SettingCompose(theme)
+                    Crossfade(
+                        targetState = pageIndex,
+                        animationSpec = tween(durationMillis = 300)
+                    ) {
+                        when(it) {
+                            0 -> pages[0]()
+                            1 -> pages[1]()
+                        }
                     }
                 }
             }

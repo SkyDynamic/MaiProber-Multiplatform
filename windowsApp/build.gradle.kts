@@ -18,6 +18,7 @@ dependencies {
 
     implementation(compose.components.resources)
     implementation(compose.desktop.currentOs)
+    implementation(compose.animation)
     implementation(compose.material3)
     implementation(libs.coil.compose)
 }
