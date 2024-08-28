@@ -8,6 +8,9 @@ group = "io.github.skydynamic"
 version = "1.0-SNAPSHOT"
 
 dependencies {
+    // local jar
+    api(fileTree("libs"))
+
     // Test
     testImplementation(kotlin("test"))
     testImplementation(libs.kotlinx.coroutines.test)
