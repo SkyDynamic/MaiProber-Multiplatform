@@ -17,11 +17,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import io.github.skydynamic.maiprober.AppPlatform
 import io.github.skydynamic.maiprober.MaimaiProberMain
 import io.github.skydynamic.maiprober.util.ClipDataUtil
 import io.github.skydynamic.maiprober.util.OauthTokenUtil
 import io.github.skydynamic.maiprober.util.asIcon
+import io.github.skydynamic.maiprober.util.config.Config
 import io.github.skydynamic.windowsapp.generated.resources.Res
 import io.github.skydynamic.windowsapp.generated.resources.eye_hidden_24px
 import io.github.skydynamic.windowsapp.generated.resources.eye_show_24px
@@ -31,49 +33,58 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+val maimaiProberMain = MaimaiProberMain()
+
+class DivingFishViewModel : ViewModel() {
+    var proxyEnable by mutableStateOf(false)
+    var username by mutableStateOf(maimaiProberMain.getConfig().userName)
+    var password by mutableStateOf(maimaiProberMain.getConfig().password)
+    var passwordHidden by mutableStateOf(false)
+    var saveUsernameAndPassword by mutableStateOf(true)
+    var oauthUrl by mutableStateOf("")
+    var gameType by mutableStateOf(false)
+    var openAccountVerifyResultDialog by mutableStateOf(false)
+    var accountVerifyResult by mutableStateOf("")
+    var openCopySuccessDialog by mutableStateOf(false)
+    var openUpdateScoreStartedDialog by mutableStateOf(false)
+    var openUpdateScoreFinishedDialog by mutableStateOf(false)
+
+    companion object {
+        @JvmStatic
+        val instance = DivingFishViewModel()
+    }
+}
+
 @Composable
 @OptIn(DelicateCoroutinesApi::class)
 fun DivingFishCompose(theme: ColorScheme) {
-    val maimaiProberMain = MaimaiProberMain()
-
-    var proxyEnable by remember { mutableStateOf(false) }
-    var username by remember { mutableStateOf(maimaiProberMain.getConfig().userName) }
-    var password by remember { mutableStateOf(maimaiProberMain.getConfig().password) }
-    var passwordHidden by mutableStateOf(false)
-    var saveUsernameAndPassword by remember { mutableStateOf(true) }
-    var oauthUrl by remember { mutableStateOf("") }
-    var gameType by remember { mutableStateOf(false) }
-    var openAccountVerifyResultDialog by remember { mutableStateOf(false) }
-    var accountVerifyResult by mutableStateOf("")
-    var openCopySuccessDialog by remember { mutableStateOf(false) }
-    var openUpdateScoreStartedDialog by remember { mutableStateOf(false) }
-    var openUpdateScoreFinishedDialog by remember { mutableStateOf(false) }
+    val viewModel = remember { DivingFishViewModel.instance }
 
     MaterialTheme(
         colorScheme = theme
     ) {
         when {
-            openCopySuccessDialog -> {
+            viewModel.openCopySuccessDialog -> {
                 DialogCompose.infoDialog("已将Oauth链接复制到剪切板\n请复制到微信安全的聊天中并打开") {
-                    openCopySuccessDialog = false
+                    viewModel.openCopySuccessDialog = false
                 }
             }
 
-            openAccountVerifyResultDialog -> {
-                DialogCompose.infoDialog(accountVerifyResult) {
-                    openAccountVerifyResultDialog = false
+            viewModel.openAccountVerifyResultDialog -> {
+                DialogCompose.infoDialog(viewModel.accountVerifyResult) {
+                    viewModel.openAccountVerifyResultDialog = false
                 }
             }
 
-            openUpdateScoreStartedDialog -> {
+            viewModel.openUpdateScoreStartedDialog -> {
                 DialogCompose.infoDialog("更新成绩中, 请稍后") {
-                    openUpdateScoreStartedDialog = false
+                    viewModel.openUpdateScoreStartedDialog = false
                 }
             }
 
-            openUpdateScoreFinishedDialog -> {
+            viewModel.openUpdateScoreFinishedDialog -> {
                 DialogCompose.infoDialog("更新成绩完成") {
-                    openUpdateScoreFinishedDialog = false
+                    viewModel.openUpdateScoreFinishedDialog = false
                 }
             }
         }
@@ -91,27 +102,27 @@ fun DivingFishCompose(theme: ColorScheme) {
             ) {
                 Button(
                     onClick = {
-                        proxyEnable = !proxyEnable
-                        if (proxyEnable) {
+                        viewModel.proxyEnable = !viewModel.proxyEnable
+                        if (viewModel.proxyEnable) {
                             GlobalScope.launch(Dispatchers.IO) {
                                 val config = maimaiProberMain.getConfig()
                                 val proberUtil = maimaiProberMain.getConfig().platform.factory
-                                proberUtil.updateStartedSignal.connect { openUpdateScoreStartedDialog = true }
-                                proberUtil.updateFinishedSignal.connect { openUpdateScoreFinishedDialog = true }
-                                if (proberUtil.validateProberAccount(username, password)) {
-                                    config.userName = username
-                                    config.password = password
+                                proberUtil.updateStartedSignal.connect { viewModel.openUpdateScoreStartedDialog = true }
+                                proberUtil.updateFinishedSignal.connect { viewModel.openUpdateScoreFinishedDialog = true }
+                                if (proberUtil.validateProberAccount(viewModel.username, viewModel.password)) {
+                                    config.userName = viewModel.username
+                                    config.password = viewModel.password
                                     maimaiProberMain.start()
                                     AppPlatform.setupSystemProxy("127.0.0.1", maimaiProberMain.getConfig().proxyPort)
                                 } else {
-                                    accountVerifyResult = "登录失败, 可能的原因: \n1. 网络出现错误\n2.账号密码错误"
-                                    openAccountVerifyResultDialog = true
-                                    proxyEnable = false
+                                    viewModel.accountVerifyResult = "登录失败, 可能的原因: \n1. 网络出现错误\n2.账号密码错误"
+                                    viewModel.openAccountVerifyResultDialog = true
+                                    viewModel.proxyEnable = false
                                 }
                             }
                         } else {
                             GlobalScope.launch(Dispatchers.IO) {
-                                if (!saveUsernameAndPassword) {
+                                if (!viewModel.saveUsernameAndPassword) {
                                     maimaiProberMain.getConfig().userName = ""
                                     maimaiProberMain.getConfig().password = ""
                                 }
@@ -129,7 +140,7 @@ fun DivingFishCompose(theme: ColorScheme) {
                         modifier = Modifier.size(28.dp)
                     )
                     Text(
-                        if (!proxyEnable) "开启代理(先输入账号密码)" else "关闭代理"
+                        if (!viewModel.proxyEnable) "开启代理(先输入账号密码)" else "关闭代理"
                     )
                 }
 
@@ -156,13 +167,13 @@ fun DivingFishCompose(theme: ColorScheme) {
                 Text("舞萌DX  ")
 
                 Switch(
-                    checked = gameType,
+                    checked = viewModel.gameType,
                     onCheckedChange = {
-                        gameType = it
-                        oauthUrl = if (gameType) {
-                            oauthUrl.replace("maimai-dx", "chunithm")
+                        viewModel.gameType = it
+                        viewModel.oauthUrl = if (viewModel.gameType) {
+                            viewModel.oauthUrl.replace("maimai-dx", "chunithm")
                         } else {
-                            oauthUrl.replace("chunithm", "maimai-dx")
+                            viewModel.oauthUrl.replace("chunithm", "maimai-dx")
                         }
                     }
                 )
@@ -173,9 +184,9 @@ fun DivingFishCompose(theme: ColorScheme) {
             Spacer(Modifier.height(15.dp))
 
             TextField(
-                value = username,
+                value = viewModel.username,
                 onValueChange = {
-                    username = it
+                    viewModel.username = it
                 },
                 leadingIcon = {
                     Icon(Icons.Filled.Email, null)
@@ -187,17 +198,17 @@ fun DivingFishCompose(theme: ColorScheme) {
             Spacer(Modifier.height(15.dp))
 
             TextField(
-                value = password,
+                value = viewModel.password,
                 onValueChange = {
-                    password = it
+                    viewModel.password = it
                 },
                 trailingIcon = {
                     IconButton(
                         onClick = {
-                            passwordHidden = !passwordHidden
+                            viewModel.passwordHidden = !viewModel.passwordHidden
                         }
                     ) {
-                        if (!passwordHidden) Icon(
+                        if (!viewModel.passwordHidden) Icon(
                             Res.drawable.eye_show_24px.asIcon(),
                             null,
                             modifier = Modifier.size(28.dp)
@@ -214,7 +225,7 @@ fun DivingFishCompose(theme: ColorScheme) {
                 },
                 singleLine = true,
                 label = { Text("密码") },
-                visualTransformation = if (!passwordHidden) PasswordVisualTransformation() else VisualTransformation.None
+                visualTransformation = if (!viewModel.passwordHidden) PasswordVisualTransformation() else VisualTransformation.None
             )
 
             Spacer(Modifier.height(15.dp))
@@ -223,8 +234,8 @@ fun DivingFishCompose(theme: ColorScheme) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Checkbox(
-                    checked = saveUsernameAndPassword,
-                    onCheckedChange = { saveUsernameAndPassword = it }
+                    checked = viewModel.saveUsernameAndPassword,
+                    onCheckedChange = { viewModel.saveUsernameAndPassword = it }
                 )
                 Text(
                     "记住账号密码"
@@ -242,12 +253,12 @@ fun DivingFishCompose(theme: ColorScheme) {
                             config.secretKey,
                             60 * 15
                         )
-                        val type = if (!gameType) "maimai-dx" else "chunithm"
+                        val type = if (!viewModel.gameType) "maimai-dx" else "chunithm"
                         val url = "http://127.0.0.1:${config.proxyPort}/oauth/$type?token=$token"
-                        oauthUrl = url
+                        viewModel.oauthUrl = url
                     }
                 },
-                enabled = proxyEnable,
+                enabled = viewModel.proxyEnable,
                 modifier = Modifier.width(300.dp).height(50.dp),
             ) {
                 Icon(
@@ -265,9 +276,9 @@ fun DivingFishCompose(theme: ColorScheme) {
                     .fillMaxWidth()
                     .padding(15.dp)
                     .clickable {
-                        if (proxyEnable) {
-                            ClipDataUtil.copyToClipboard(oauthUrl)
-                            openCopySuccessDialog = true
+                        if (viewModel.proxyEnable) {
+                            ClipDataUtil.copyToClipboard(viewModel.oauthUrl)
+                            viewModel.openCopySuccessDialog = true
                         }
                     }
             ) {
@@ -287,7 +298,7 @@ fun DivingFishCompose(theme: ColorScheme) {
                             withStyle(
                                 style = SpanStyle(fontWeight = FontWeight.W900)
                             ) {
-                                append(oauthUrl)
+                                append(viewModel.oauthUrl)
                             }
                         },
                         modifier = Modifier.padding(16.dp),

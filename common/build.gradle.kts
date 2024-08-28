@@ -15,9 +15,9 @@ dependencies {
     // Logger
     implementation(libs.log4j.core)
     implementation(libs.log4j.slf4j2.impl)
-            
-    // Gson
-    implementation(libs.gson)
+
+    // Jsoup
+    implementation(libs.jsoup)
 
     // Ktor Server
     implementation(libs.ktor.server.core)

@@ -1,10 +1,10 @@
 [versions]
 agp = "8.6.0-alpha07"
 api = "13.1.5"
-gson = "2.11.0"
 hiddenapibypass = "4.3"
 jna = "5.14.0"
 jjwtApi = "0.11.2"
+jsoup = "1.18.1"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -21,19 +21,18 @@ constraintlayout = "2.1.4"
 navigationFragmentKtx = "2.6.0"
 navigationUiKtx = "2.6.0"
 composeMultiplatform = "1.6.10"
-coliCompose = "3.0.0-alpha10"
-animationDesktop = "1.6.8"
+lifecycleViewmodelDesktop = "2.8.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 api = { module = "dev.rikka.shizuku:api", version.ref = "api" }
-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 hiddenapibypass = { module = "org.lsposed.hiddenapibypass:hiddenapibypass", version.ref = "hiddenapibypass" }
 jna = { module = "net.java.dev.jna:jna", version.ref = "jna" }
 jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwtApi" }
 jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwtApi" }
 jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwtApi" }
 jna-platform = { module = "net.java.dev.jna:jna-platform", version.ref = "jna" }
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -51,16 +50,14 @@ ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negoti
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktorVersion" }
 ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktorVersion" }
 ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktorVersion" }
-log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
 log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
 log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coliCompose" }
 provider = { module = "dev.rikka.shizuku:provider", version.ref = "api" }
-androidx-animation-desktop = { group = "androidx.compose.animation", name = "animation-desktop", version.ref = "animationDesktop" }
+androidx-lifecycle-viewmodel-desktop = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-desktop", version.ref = "lifecycleViewmodelDesktop" }
 
 
 [plugins]

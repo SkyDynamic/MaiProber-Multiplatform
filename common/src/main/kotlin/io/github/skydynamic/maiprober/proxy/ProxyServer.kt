@@ -19,7 +19,7 @@ class ProxyServer(private val context: ProberContext) : Thread() {
         name = "ProxyServer"
     }
 
-        private val server: EmbeddedServer<CIOApplicationEngine, CIOApplicationEngine.Configuration> =
+    private val server: EmbeddedServer<CIOApplicationEngine, CIOApplicationEngine.Configuration> =
         embeddedServer(
             CIO,
             configure = {

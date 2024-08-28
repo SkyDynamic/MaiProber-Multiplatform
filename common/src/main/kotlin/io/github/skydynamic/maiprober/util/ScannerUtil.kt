@@ -3,7 +3,7 @@ package io.github.skydynamic.maiprober.util
 import io.github.skydynamic.maiprober.Prober
 import io.github.skydynamic.maiprober.ProberContext
 import io.github.skydynamic.maiprober.util.config.Config
-import io.github.skydynamic.maiprober.util.prober.DivingFishProberUtil
+import io.github.skydynamic.maiprober.util.prober.divingfish.DivingFishProberUtil
 import kotlinx.coroutines.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

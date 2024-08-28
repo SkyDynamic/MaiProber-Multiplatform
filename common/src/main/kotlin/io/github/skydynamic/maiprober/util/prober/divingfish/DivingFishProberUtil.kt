@@ -1,7 +1,13 @@
-package io.github.skydynamic.maiprober.util.prober
+package io.github.skydynamic.maiprober.util.prober.divingfish
 
 import io.github.skydynamic.maiprober.Constant
+import io.github.skydynamic.maiprober.util.ParseScorePageUtil
+import io.github.skydynamic.maiprober.util.SettingManager
+import io.github.skydynamic.maiprober.util.prober.LoginData
 import io.github.skydynamic.maiprober.util.prober.interfact.ProberUtil
+import io.github.skydynamic.maiprober.util.score.ChunithmMusicDetailList
+import io.github.skydynamic.maiprober.util.score.MaimaiDifficulty
+import io.github.skydynamic.maiprober.util.score.MaimaiMusicDetailList
 import io.github.skydynamic.maiprober.util.singal.MaiproberSignal
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -16,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.random.Random
@@ -27,16 +34,22 @@ suspend fun delayRandomTime(diff: Int) {
     }
 }
 
+val json = Json {
+    ignoreUnknownKeys = true
+    encodeDefaults = true
+}
+
+val client = HttpClient(CIO) {
+    install(ContentNegotiation) {
+        json()
+    }
+    install(HttpCookies) {
+        storage = AcceptAllCookiesStorage()
+    }
+}
+
 class DivingFishProberUtil : ProberUtil {
     private val loginUrl = "https://www.diving-fish.com/api/maimaidxprober/login"
-    private val client = HttpClient(CIO) {
-        install(ContentNegotiation) {
-            json()
-        }
-        install(HttpCookies) {
-            storage = AcceptAllCookiesStorage()
-        }
-    }
 
     private val logger: Logger = LoggerFactory.getLogger("MaimaiDX-Prober-Kotlin")
     private lateinit var jwtToken: Cookie
@@ -66,21 +79,15 @@ class DivingFishProberUtil : ProberUtil {
         return true
     }
 
-    private suspend fun parseMaiResult(content: String): String {
-        val resp = client.post("http://www.diving-fish.com:8089/page") {
-            cookie(jwtToken)
-            setBody(content)
-            contentType(ContentType.Text.Plain)
-        }
-        return resp.bodyAsText()
-    }
-
     override suspend fun uploadMaimaiProberData(
         username: String,
         password: String,
-        authUrl: String
+        authUrl: String,
+        isCache: Boolean
     ) {
         logger.info("开始更新Maimai成绩")
+
+        val musicDetailList = MaimaiMusicDetailList(timestamp = System.currentTimeMillis())
 
         updateStartedSignal.emit("开始更新Maimai成绩")
 
@@ -95,29 +102,26 @@ class DivingFishProberUtil : ProberUtil {
             throw RuntimeException("登录公众号失败")
         }
 
-        val diffNameList = listOf(
-            "Basic",
-            "Advanced",
-            "Expert",
-            "Master",
-            "Re:Master"
-        )
-
-        var diff = 0
-        for (diffName in diffNameList) {
-            logger.info("获取 Maimai-DX $diffName 难度成绩数据")
-            delayRandomTime(diff)
+        for ((diffIndex, diff) in MaimaiDifficulty.entries.withIndex()) {
+            logger.info("获取 Maimai-DX ${diff.diffName} 难度成绩数据")
+            delayRandomTime(diffIndex)
 
             with(client) {
                 val scoreResp: HttpResponse = get(
-                    "https://maimai.wahlap.com/maimai-mobile/record/musicGenre/search/?genre=99&diff=$diff"
+                    "https://maimai.wahlap.com/maimai-mobile/record/musicGenre/search/?genre=99&diff=$diffIndex"
                 )
                 val body = scoreResp.bodyAsText()
 
                 val data = Regex("<html.*>([\\s\\S]*)</html>")
                     .find(body)?.groupValues?.get(1)?.replace("\\s+/g", " ")
 
-                logger.info("上传 Maimai-DX $diffName 难度成绩到 Diving-Fish 查分器数据库")
+                logger.info("上传 Maimai-DX ${diff.diffName} 难度成绩到 Diving-Fish 查分器数据库")
+
+                val parseResult = ParseScorePageUtil.parseMaimai(data ?: "")
+
+                if (SettingManager.instance.useCache.value) {
+                    musicDetailList.setMusicDetailByDifficulty(diff, parseResult)
+                }
 
                 val resp: HttpResponse = post("https://www.diving-fish.com/api/pageparser/page") {
                     headers {
@@ -128,16 +132,25 @@ class DivingFishProberUtil : ProberUtil {
                 }
                 val respData: String = resp.bodyAsText()
 
-                logger.info("Diving-Fish 上传 Maimai-DX $diffName 分数接口返回信息: $respData")
+                logger.info("Diving-Fish 上传 Maimai-DX ${diff.diffName} 分数接口返回信息: $respData")
             }
-            diff += 1
         }
         logger.info("Maimai 成绩上传到 Diving-Fish 查分器数据库完毕")
+        if (SettingManager.instance.useCache.value) {
+            musicDetailList.save()
+        }
         updateFinishedSignal.emit("Maimai 成绩上传到 Diving-Fish 查分器数据库完毕")
     }
 
-    override suspend fun uploadChunithmProberData(username: String, password: String, authUrl: String) {
+    override suspend fun uploadChunithmProberData(
+        username: String,
+        password: String,
+        authUrl: String,
+        isCache: Boolean
+    ) {
         logger.info("开始更新Chunithm成绩")
+
+        val musicDetailList = ChunithmMusicDetailList()
 
         updateStartedSignalBuilder.emit("开始更新Chunithm成绩")
 
@@ -210,6 +223,15 @@ class DivingFishProberUtil : ProberUtil {
         }
         logger.info("Chunithm 成绩上传到 Diving-Fish 查分器数据库完毕")
         updateFinishedSignal.emit("Maimai 成绩上传到 Diving-Fish 查分器数据库完毕")
+    }
+
+    companion object {
+        @JvmStatic
+        suspend fun getChunithmMusicData(): List<DivingFishChunithmMusicData> {
+            val resp = client.get("https://www.diving-fish.com/api/maimaidxprober/music/data")
+            val data: List<DivingFishChunithmMusicData> = json.decodeFromString(resp.bodyAsText())
+            return data
+        }
     }
 }
 

@@ -20,7 +20,7 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(compose.animation)
     implementation(compose.material3)
-    implementation(libs.coil.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.desktop)
 }
 
 tasks.test {

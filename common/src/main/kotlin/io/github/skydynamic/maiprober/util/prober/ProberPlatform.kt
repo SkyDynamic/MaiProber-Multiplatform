@@ -1,5 +1,6 @@
 package io.github.skydynamic.maiprober.util.prober
 
+import io.github.skydynamic.maiprober.util.prober.divingfish.DivingFishProberUtil
 import io.github.skydynamic.maiprober.util.prober.interfact.ProberUtil
 
 

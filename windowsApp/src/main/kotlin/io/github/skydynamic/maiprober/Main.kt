@@ -19,6 +19,7 @@ import androidx.compose.ui.window.application
 import io.github.skydynamic.maiprober.compose.DivingFishCompose
 import io.github.skydynamic.maiprober.compose.SettingCompose
 import io.github.skydynamic.maiprober.util.asIcon
+import io.github.skydynamic.maiprober.util.config.Config
 import io.github.skydynamic.windowsapp.generated.resources.*
 import kotlinx.coroutines.launch
 import org.jetbrains.skiko.hostOs
@@ -156,6 +157,7 @@ fun main() {
         Window(
             onCloseRequest = {
                 AppPlatform.rollbackSystemProxy()
+                Config.write()
                 exitApplication()
             },
             title = "MaimaiProber-MultiPlatform",
