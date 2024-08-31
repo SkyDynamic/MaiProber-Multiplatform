@@ -1,21 +1,21 @@
 package io.github.skydynamic.maiprober.compose
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import coil3.compose.rememberAsyncImagePainter
 import io.github.skydynamic.maiprober.compose.DialogCompose.confirmDialog
-import io.github.skydynamic.maiprober.util.downloadFinishSignal
-import io.github.skydynamic.maiprober.util.downloadSongsIcon
-import io.github.skydynamic.maiprober.util.downloadStartSignal
-import io.github.skydynamic.maiprober.util.jacketSavePath
+import io.github.skydynamic.maiprober.util.*
 import io.github.skydynamic.maiprober.util.score.MaimaiMusicDetailList
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.File
 import kotlin.io.path.exists
 
 enum class MaimaiB50Platform(val id: String, val index: Int) {
@@ -24,10 +24,10 @@ enum class MaimaiB50Platform(val id: String, val index: Int) {
     Lxns("落雪查分器", 2)
 }
 
-fun generateB50(platform: MaimaiB50Platform) {
+fun generateB50(platform: MaimaiB50Platform, timestamp: Long) {
     when (platform) {
         MaimaiB50Platform.LocalCache -> {
-            io.github.skydynamic.maiprober.util.generateB50(MaimaiMusicDetailList.getCache())
+            generateB50(MaimaiMusicDetailList.getCache(), timestamp)
         }
 
         MaimaiB50Platform.DivingFish -> {
@@ -46,6 +46,8 @@ fun MaimaiB50GenerateCompose() {
     var openDownloadJacketAskDialog by mutableStateOf(false)
     var openDownloadJacketStartedDialog by mutableStateOf(false)
     var openDownloadJacketFinishedDialog by mutableStateOf(false)
+    var showImage by remember { mutableStateOf(false) }
+    var timestamp by remember { mutableStateOf(0L) }
 
     val proberPlatformList = MaimaiB50Platform.entries
 
@@ -130,13 +132,24 @@ fun MaimaiB50GenerateCompose() {
                     if (!jacketSavePath.exists()) {
                         openDownloadJacketAskDialog = true
                     }
+                    timestamp = System.currentTimeMillis()
                     GlobalScope.launch(Dispatchers.IO) {
-                        generateB50(proberPlatformList[selectedPlatformIndex])
+                        showImage = false
+                        showImageSignal.connect { showImage = true }
+                        generateB50(proberPlatformList[selectedPlatformIndex], timestamp)
                     }
                 }
             ) {
                 Text("生成B50")
             }
+        }
+
+        if (showImage) {
+            Image(
+                rememberAsyncImagePainter(File("data/maimai/b50/output_$timestamp.png")),
+                contentDescription = null,
+                modifier = Modifier.fillMaxWidth().padding(16.dp)
+            )
         }
     }
 }

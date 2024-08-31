@@ -21,6 +21,9 @@ dependencies {
     implementation(compose.animation)
     implementation(compose.material3)
     implementation(libs.androidx.lifecycle.viewmodel.desktop)
+
+    implementation(libs.coil.core)
+    implementation(libs.coil.compose)
 }
 
 tasks.test {

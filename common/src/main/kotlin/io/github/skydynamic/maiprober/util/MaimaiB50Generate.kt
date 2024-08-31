@@ -54,6 +54,8 @@ val songScoreBackgroundColorList = listOf(
 val downloadStartSignal = MaiproberSignal<Unit>()
 val downloadFinishSignal = MaiproberSignal<Unit>()
 
+val showImageSignal = MaiproberSignal<Unit>()
+
 @OptIn(DelicateCoroutinesApi::class)
 suspend fun downloadSongsIcon() {
     if (!jacketSavePath.exists()) jacketSavePath.toFile().mkdirs()
@@ -315,7 +317,7 @@ fun generateSongScore(data: MaimaiMusicDetail): Image {
 }
 
 
-fun generateB50(data: MaimaiMusicDetailList) {
+fun generateB50(data: MaimaiMusicDetailList, timestamp: Long) {
     val musicList = data.songs
     var rating = 0
     val b35List = musicList.filter { it.version < latestMaimaiVersion }.sortedByDescending { it.rating }.take(35)
@@ -324,10 +326,11 @@ fun generateB50(data: MaimaiMusicDetailList) {
     b35List.forEach { rating += it.rating }
     b15List.forEach { rating += it.rating }
 
-    println("Rating: $rating")
+    val saveFile = File("data/maimai/b50/output_$timestamp.png")
+    if (!saveFile.exists()) saveFile.parentFile.mkdirs()
 
     View(
-        file = File("output.png"),
+        file = saveFile,
         modifier = Modifier().width(2080.dp).height(2540.dp)
     ) {
         Box(modifier = Modifier().fillMaxSize()) {
@@ -403,7 +406,6 @@ fun generateB50(data: MaimaiMusicDetailList) {
                     }
                 }
             }
-
             Text(
                 "Generate by MaimaiProber-MultiPlatform | Style by SkyDynamic",
                 alignment = LayoutAlignment.BOTTOM_CENTER,
@@ -412,4 +414,5 @@ fun generateB50(data: MaimaiMusicDetailList) {
             )
         }
     }
+    showImageSignal.emit(Unit)
 }
