@@ -7,12 +7,29 @@ plugins {
 group = "io.github.skydynamic"
 version = "1.0-SNAPSHOT"
 
-dependencies {
-    // local jar
-    api(fileTree("libs"))
+val osName: String = System.getProperty("os.name")
+val targetOs = when {
+    osName == "Mac OS X" -> "macos"
+    osName.startsWith("Win") -> "windows"
+    osName.startsWith("Linux") -> "linux"
+    else -> error("Unsupported OS: $osName")
+}
 
+val targetArch = when (val osArch = System.getProperty("os.arch")) {
+    "x86_64", "amd64" -> "x64"
+    "aarch64" -> "arm64"
+    else -> error("Unsupported arch: $osArch")
+}
+
+val skikoVersion = "0.8.9" // or any more recent version
+val skikoTarget = "${targetOs}-${targetArch}"
+
+dependencies {
     // Test
     testImplementation(kotlin("test"))
+
+    implementation(project(":skikoLayout"))
+
     testImplementation(libs.kotlinx.coroutines.test)
 
     // Logger
@@ -43,6 +60,8 @@ dependencies {
     implementation(libs.jjwt.api)
     runtimeOnly(libs.jjwt.impl)
     runtimeOnly(libs.jjwt.jackson)
+
+    implementation("org.jetbrains.skiko:skiko-awt-runtime-$skikoTarget:0.8.9")
 }
 
 tasks.test {

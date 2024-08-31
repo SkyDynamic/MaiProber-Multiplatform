@@ -12,6 +12,7 @@ import io.github.skydynamic.maiprober.util.singal.MaiproberSignal
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.request.*
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory
 import kotlin.random.Random
 
 suspend fun delayRandomTime(diff: Int) {
-    val duration = 1000L * (diff + 1) + 1000L * 5 * Random.nextDouble()
+    val duration = 500L * (diff + 1) + 500L * 2 * Random.nextDouble()
     withContext(Dispatchers.IO) {
         delay(duration.toLong())
     }
@@ -42,6 +43,10 @@ val json = Json {
 val client = HttpClient(CIO) {
     install(ContentNegotiation) {
         json()
+    }
+    install(HttpTimeout) {
+        requestTimeoutMillis = 30000
+        connectTimeoutMillis = 30000
     }
     install(HttpCookies) {
         storage = AcceptAllCookiesStorage()
@@ -102,13 +107,13 @@ class DivingFishProberUtil : ProberUtil {
             throw RuntimeException("登录公众号失败")
         }
 
-        for ((diffIndex, diff) in MaimaiDifficulty.entries.withIndex()) {
+        for (diff in MaimaiDifficulty.entries) {
             logger.info("获取 Maimai-DX ${diff.diffName} 难度成绩数据")
-            delayRandomTime(diffIndex)
 
             with(client) {
                 val scoreResp: HttpResponse = get(
-                    "https://maimai.wahlap.com/maimai-mobile/record/musicGenre/search/?genre=99&diff=$diffIndex"
+                    "https://maimai.wahlap.com/maimai-mobile/record/" +
+                            "musicGenre/search/?genre=99&diff=${diff.diffIndex}"
                 )
                 val body = scoreResp.bodyAsText()
 
@@ -117,10 +122,9 @@ class DivingFishProberUtil : ProberUtil {
 
                 logger.info("上传 Maimai-DX ${diff.diffName} 难度成绩到 Diving-Fish 查分器数据库")
 
-                val parseResult = ParseScorePageUtil.parseMaimai(data ?: "")
-
                 if (SettingManager.instance.useCache.value) {
-                    musicDetailList.setMusicDetailByDifficulty(diff, parseResult)
+                    val parseResult = ParseScorePageUtil.parseMaimai(data ?: "", diff)
+                    musicDetailList.songs.addAll(parseResult)
                 }
 
                 val resp: HttpResponse = post("https://www.diving-fish.com/api/pageparser/page") {
@@ -133,6 +137,7 @@ class DivingFishProberUtil : ProberUtil {
                 val respData: String = resp.bodyAsText()
 
                 logger.info("Diving-Fish 上传 Maimai-DX ${diff.diffName} 分数接口返回信息: $respData")
+                delayRandomTime(diff.diffIndex)
             }
         }
         logger.info("Maimai 成绩上传到 Diving-Fish 查分器数据库完毕")

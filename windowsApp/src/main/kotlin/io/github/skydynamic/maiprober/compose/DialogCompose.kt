@@ -48,4 +48,47 @@ object DialogCompose {
             }
         }
     }
+
+    @Composable
+    fun confirmDialog(info: String, onConfirm: () -> Unit, onCancel: () -> Unit) {
+        Dialog(onDismissRequest = { onCancel() }) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(16.dp),
+                shape = RoundedCornerShape(16.dp),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        text = info,
+                        modifier = Modifier.padding(16.dp),
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        TextButton(
+                            onClick = { onConfirm() },
+                            modifier = Modifier.padding(8.dp),
+                        ) {
+                            Text("确认")
+                        }
+                        TextButton(
+                            onClick = { onCancel() },
+                            modifier = Modifier.padding(8.dp),
+                        ) {
+                            Text("取消")
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

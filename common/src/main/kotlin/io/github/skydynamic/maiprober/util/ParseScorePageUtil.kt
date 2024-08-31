@@ -1,58 +1,63 @@
 package io.github.skydynamic.maiprober.util
 
-import io.github.skydynamic.maiprober.util.score.MaimaiClearType
-import io.github.skydynamic.maiprober.util.score.MaimaiMusicDetail
-import io.github.skydynamic.maiprober.util.score.MaimaiSpecialClearType
-import io.github.skydynamic.maiprober.util.score.MaimaiSyncType
+import io.github.skydynamic.maiprober.util.score.*
 import org.jsoup.Jsoup
+import org.jsoup.select.Elements
 
 class ParseScorePageUtil {
 
     companion object {
         @JvmStatic
-        fun parseMaimai(html: String): List<MaimaiMusicDetail> {
+        fun parseMaimai(html: String, difficulty: MaimaiDifficulty): List<MaimaiMusicDetail> {
             val musicList = ArrayList<MaimaiMusicDetail>()
 
             val document = Jsoup.parse(html)
-            val musicDetails = document.getElementsByClass("music_basic_score_back pointer p_3") +
-                    document.getElementsByClass("music_advanced_score_back pointer p_3") +
-                    document.getElementsByClass("music_expert_score_back pointer p_3") +
-                    document.getElementsByClass("music_master_score_back pointer p_3") +
-                    document.getElementsByClass("music_remaster_score_back pointer p_3")
-            for (musicDetail in musicDetails) {
-                val musicName = musicDetail
+            val musicCards = document.getElementsByClass("w_450 m_15 p_r f_0")
+
+            for (musicCard in musicCards) {
+                val musicName = musicCard
                     .getElementsByClass("music_name_block t_l f_13 break").text()
-                val musicLevel = musicDetail
-                    .getElementsByClass("music_lv_block f_r t_c f_14").text()
-                val musicScore = musicDetail
+                val musicScore = musicCard
                     .getElementsByClass("music_score_block w_112 t_r f_l f_12").text()
-                val musicDxScore = musicDetail
+                val musicDxScore = musicCard
                     .getElementsByClass("music_score_block w_190 t_r f_l f_12").text()
 
-                val musicClearTypes = musicDetail.getElementsByClass("h_30 f_r")
+                if (musicScore.isEmpty() && musicDxScore.isEmpty()) {
+                    continue
+                }
 
-                var musicClearType = MaimaiClearType.CLEAR
-                var musicSyncType = MaimaiSyncType.SYNC
-                var musicSpecialClearType = MaimaiSpecialClearType.COMMON
+                val musicClearTypes = musicCard.getElementsByClass("h_30 f_r")
+
+                val musicClearType = MaimaiClearType
+                    .getClearTypeByScore(musicScore.replace("%", "").toFloat())
+                var musicSyncType = MaimaiSyncType.NULL
+                var musicSpecialClearType = MaimaiSpecialClearType.NULL
+
+                val isDeluxe = musicCard.getElementsByClass("music_kind_icon")
+                    .attr("src")
+                    .contains("music_dx")
+                val musicKind = if (isDeluxe) MaimaiMusicKind.DELUXE else MaimaiMusicKind.STANDARD
+
+                val res = MAIMAI_SONG_INFO.find { it.title == musicName }
+                val musicLevel = if (isDeluxe) {
+                    if (res != null) res.dxLevel[difficulty.diffIndex] else -1f
+                } else {
+                    if (res != null) res.standardLevel[difficulty.diffIndex] else -1f
+                }
+
+                val musicRating = calcScore(musicScore, musicLevel)
+                val musicVersion = res?.version ?: 10000
 
                 for (musicClearTypeElement in musicClearTypes) {
                     val regex = Regex(".*music_icon_(.*?)?.png?.*")
                     val value = regex.find(musicClearTypeElement.attr("src"))?.groupValues?.get(1)
-
                     if (value != null) {
                         when (value) {
-                            "clear" -> musicClearType        = MaimaiClearType.CLEAR
-                            "s"     -> musicClearType        = MaimaiClearType.S
-                            "ss"    -> musicClearType        = MaimaiClearType.SS
-                            "ssp"   -> musicClearType        = MaimaiClearType.SSP
-                            "sss"   -> musicClearType        = MaimaiClearType.SSS
-                            "sssp"  -> musicClearType        = MaimaiClearType.SSSP
                             "sync"  -> musicSyncType         = MaimaiSyncType.SYNC
                             "fs"    -> musicSyncType         = MaimaiSyncType.FS
                             "fsp"   -> musicSyncType         = MaimaiSyncType.FSP
                             "fdx"   -> musicSyncType         = MaimaiSyncType.FDX
                             "fdxp"  -> musicSyncType         = MaimaiSyncType.FDXP
-                            "back"  -> musicSpecialClearType = MaimaiSpecialClearType.COMMON
                             "fc"    -> musicSpecialClearType = MaimaiSpecialClearType.FC
                             "fcp"   -> musicSpecialClearType = MaimaiSpecialClearType.FCP
                             "ap"    -> musicSpecialClearType = MaimaiSpecialClearType.AP
@@ -60,17 +65,17 @@ class ParseScorePageUtil {
                         }
                     }
                 }
-
                 musicList.add(
                     MaimaiMusicDetail(
                         musicName, musicLevel,
                         musicScore, musicDxScore,
+                        musicRating, musicVersion,
+                        musicKind, difficulty,
                         musicClearType, musicSyncType,
                         musicSpecialClearType
                     )
                 )
             }
-
             return musicList
         }
 

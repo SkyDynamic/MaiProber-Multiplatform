@@ -23,7 +23,6 @@ import io.github.skydynamic.maiprober.MaimaiProberMain
 import io.github.skydynamic.maiprober.util.ClipDataUtil
 import io.github.skydynamic.maiprober.util.OauthTokenUtil
 import io.github.skydynamic.maiprober.util.asIcon
-import io.github.skydynamic.maiprober.util.config.Config
 import io.github.skydynamic.windowsapp.generated.resources.Res
 import io.github.skydynamic.windowsapp.generated.resources.eye_hidden_24px
 import io.github.skydynamic.windowsapp.generated.resources.eye_show_24px

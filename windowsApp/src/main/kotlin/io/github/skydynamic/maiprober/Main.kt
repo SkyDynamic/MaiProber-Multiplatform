@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import io.github.skydynamic.maiprober.compose.DivingFishCompose
+import io.github.skydynamic.maiprober.compose.MaimaiB50GenerateCompose
 import io.github.skydynamic.maiprober.compose.SettingCompose
 import io.github.skydynamic.maiprober.util.asIcon
 import io.github.skydynamic.maiprober.util.config.Config
@@ -52,6 +54,7 @@ fun mainComposable() {
 
     val pages = listOf(
         @Composable { DivingFishCompose(theme) },
+        @Composable { MaimaiB50GenerateCompose(theme) },
         @Composable { SettingCompose(theme) }
     )
 
@@ -111,6 +114,26 @@ fun mainComposable() {
                     )
 
                     NavigationRailItem(
+                        selected = selectedItem.value == "b50",
+                        icon = {
+                            Icon(
+                                Icons.Default.Check,
+                                "",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+
+                        },
+                        label = { Text("MaimaiB50", style = MaterialTheme.typography.bodyMedium) },
+                        onClick = {
+                            coroutineScope.launch {
+                                drawerState.close()
+                            }
+                            pageIndex = 1
+                            selectedItem.value = "b50"
+                        }
+                    )
+
+                    NavigationRailItem(
                         selected = selectedItem.value == "settings",
                         icon = {
                             Icon(
@@ -124,7 +147,7 @@ fun mainComposable() {
                             coroutineScope.launch {
                                 drawerState.close()
                             }
-                            pageIndex = 1
+                            pageIndex = 2
                             selectedItem.value = "settings"
                         }
                     )
@@ -141,10 +164,7 @@ fun mainComposable() {
                         targetState = pageIndex,
                         animationSpec = tween(durationMillis = 300)
                     ) {
-                        when(it) {
-                            0 -> pages[0]()
-                            1 -> pages[1]()
-                        }
+                        pages[it]()
                     }
                 }
             }
