@@ -4,8 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
@@ -18,9 +17,11 @@ import androidx.compose.ui.unit.dp
 fun SettingItem(
     text: String,
     subtext: String,
-    bindingState: State<Boolean>,
+    initialValue: Boolean,
     onSettingChange: (Boolean) -> Unit
 ) {
+
+    var value by remember { mutableStateOf(initialValue) }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -47,8 +48,11 @@ fun SettingItem(
         Spacer(Modifier.weight(1f))
 
         Switch(
-            checked = bindingState.value,
-            onCheckedChange = onSettingChange
+            checked = value,
+            onCheckedChange = {
+                value = it
+                onSettingChange(it)
+            }
         )
     }
 }

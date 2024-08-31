@@ -1,9 +1,8 @@
 package io.github.skydynamic.maiprober.proxy.handler
 
-import io.github.skydynamic.maiprober.util.SettingManager
+import io.github.skydynamic.maiprober.util.config.Config
 import io.github.skydynamic.maiprober.util.config.ConfigStorage
 import io.github.skydynamic.maiprober.util.prober.ProberPlatform
-import kotlinx.coroutines.flow.last
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -11,6 +10,8 @@ import java.net.URI
 val logger: Logger = LoggerFactory.getLogger("MaiProber-InterceptHandler")
 
 object InterceptHandler {
+    val config:ConfigStorage by Config
+
     suspend fun onAuthHook(authUrl: URI, config: ConfigStorage) {
         val urlString = authUrl.toString()
         val target = urlString.replace("http", "https")
@@ -19,10 +20,10 @@ object InterceptHandler {
             if (proberUtil.validateProberAccount(config.userName, config.password)) {
                 if (target.contains("maimai-dx")) {
                     proberUtil.uploadMaimaiProberData(
-                        config.userName, config.password, target, SettingManager.instance.useCache.value)
+                        config.userName, config.password, target, config.settings.useCache)
                 } else if (target.contains("chunithm")) {
                     proberUtil.uploadChunithmProberData(
-                        config.userName, config.password, target, SettingManager.instance.useCache.value)
+                        config.userName, config.password, target, config.settings.useCache)
                 }
             } else {
                 logger.error("Prober账号密码错误")

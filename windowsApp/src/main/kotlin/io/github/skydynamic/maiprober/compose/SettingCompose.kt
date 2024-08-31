@@ -6,12 +6,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.skydynamic.maiprober.util.SettingManager
+import io.github.skydynamic.maiprober.util.config.Config
+import io.github.skydynamic.maiprober.util.config.ConfigStorage
 
 @Composable
 fun SettingCompose(theme: ColorScheme) {
-    val settingsManager = remember { SettingManager.instance }
-    val cacheData = settingsManager.useCache.collectAsState()
+    val config:ConfigStorage by Config
 
     MaterialTheme(
         colorScheme = theme
@@ -26,9 +26,10 @@ fun SettingCompose(theme: ColorScheme) {
             SettingItem(
                 text = "启用数据缓存",
                 subtext = "启用后, 将会在查分后缓存所有成绩的记录\n开启后会导致查分速度变慢",
-                bindingState = cacheData,
+                initialValue = config.settings.useCache,
                 onSettingChange = { newValue ->
-                    settingsManager.setUseCache(newValue)
+                    config.settings.useCache = newValue
+                    Config.write()
                 }
             )
         }

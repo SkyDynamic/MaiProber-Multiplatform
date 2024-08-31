@@ -2,7 +2,7 @@ package io.github.skydynamic.maiprober.util.prober.divingfish
 
 import io.github.skydynamic.maiprober.Constant
 import io.github.skydynamic.maiprober.util.ParseScorePageUtil
-import io.github.skydynamic.maiprober.util.SettingManager
+import io.github.skydynamic.maiprober.util.config.Config
 import io.github.skydynamic.maiprober.util.prober.LoginData
 import io.github.skydynamic.maiprober.util.prober.interfact.ProberUtil
 import io.github.skydynamic.maiprober.util.score.ChunithmMusicDetailList
@@ -122,7 +122,7 @@ class DivingFishProberUtil : ProberUtil {
 
                 logger.info("上传 Maimai-DX ${diff.diffName} 难度成绩到 Diving-Fish 查分器数据库")
 
-                if (SettingManager.instance.useCache.value) {
+                if (Config.settings.useCache) {
                     val parseResult = ParseScorePageUtil.parseMaimai(data ?: "", diff)
                     musicDetailList.songs.addAll(parseResult)
                 }
@@ -141,7 +141,7 @@ class DivingFishProberUtil : ProberUtil {
             }
         }
         logger.info("Maimai 成绩上传到 Diving-Fish 查分器数据库完毕")
-        if (SettingManager.instance.useCache.value) {
+        if (Config.settings.useCache) {
             musicDetailList.save()
         }
         updateFinishedSignal.emit("Maimai 成绩上传到 Diving-Fish 查分器数据库完毕")

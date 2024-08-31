@@ -10,7 +10,7 @@ object AppPlatform : Platform {
     private val delegate by lazy {
         val os = ManagementFactory.getOperatingSystemMXBean()
         val osName = os.name
-//        println("Running on $osName")
+        println("Running on $osName")
         if (os.name.lowercase().contains("windows")) {
             val plat = WindowsPlatformImpl()
             return@lazy plat

@@ -3,10 +3,13 @@ package io.github.skydynamic.maiprober.util.config
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.io.path.*
+import kotlin.reflect.KProperty
 
 object Config {
 
     lateinit var configStorage: ConfigStorage
+    val settings
+        get() = configStorage.settings
     private val configPath = Path("./config.json")
     private val json = Json {
         encodeDefaults = true
@@ -34,4 +37,13 @@ object Config {
         configPath.createFile()
         configPath.writeText(json.encodeToString(configStorage))
     }
+
+    fun getValue(){
+
+    }
+
+    operator fun getValue(nothing: Any?, property: KProperty<*>): ConfigStorage {
+        return configStorage
+    }
+
 }
