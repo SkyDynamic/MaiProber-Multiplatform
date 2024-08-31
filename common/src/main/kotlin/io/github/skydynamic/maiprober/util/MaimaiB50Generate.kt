@@ -345,7 +345,7 @@ fun generateB50(data: MaimaiMusicDetailList) {
                                 Image.makeFromEncoded(ResourceManager.MaimaiResources.BESTS_BACKGROUND.readBytes()),
                             )
                             Text(
-                                "Beste 35",
+                                "Bests 35",
                                 fontSize = 80.dp,
                                 alignment = LayoutAlignment.TOP_CENTER,
                                 color = Color.BLACK
@@ -379,7 +379,7 @@ fun generateB50(data: MaimaiMusicDetailList) {
                                 Image.makeFromEncoded(ResourceManager.MaimaiResources.BESTS_BACKGROUND.readBytes()),
                             )
                             Text(
-                                "Beste 15",
+                                "Bests 15",
                                 fontSize = 80.dp,
                                 alignment = LayoutAlignment.TOP_CENTER,
                                 color = Color.BLACK
