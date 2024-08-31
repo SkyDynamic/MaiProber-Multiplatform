@@ -24,8 +24,6 @@ import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.exists
 import kotlin.io.path.readBytes
-import kotlin.math.floor
-import kotlin.math.round
 
 // Use Lxns resource
 const val resourceUrl = "https://assets2.lxns.net/maimai"
@@ -111,7 +109,7 @@ suspend fun downloadWithRetry(
 }
 
 fun calcScore(score: String, songLevel: Float): Int {
-    val formatScore = score.replace("%", "").toFloat()
+    var formatScore = score.replace("%", "").toFloat()
     val multiplierFactor = when (formatScore) {
         in 10.0000..19.9999 -> 0.016 // D
         in 20.0000..29.9999 -> 0.032 // D
@@ -122,18 +120,22 @@ fun calcScore(score: String, songLevel: Float): Int {
         in 70.0000..74.9999 -> 0.112 // BB
         in 75.0000..79.9999 -> 0.120 // BBB
         in 80.0000..89.9999 -> 0.128 // A
-        in 90.0000..94.9999 -> 0.136 // AA
-        in 95.0000..96.9999 -> 0.168 // AAA
+        in 90.0000..93.9999 -> 0.152 // AA
+        in 94.0000..96.9998 -> 0.168 // AAA
+        in 96.9999..96.9999 -> 0.176 // AAA
         in 97.0000..97.9999 -> 0.200 // S
-        in 98.0000..98.9999 -> 0.203 // S+
+        in 98.0000..98.9998 -> 0.203 // S+
+        in 98.9999..98.9999 -> 0.206 // S+
         in 99.0000..99.4999 -> 0.208 // SS
-        in 99.5000..99.9999 -> 0.211 // SS+
-        in 100.0000..100.4999 -> 0.216 // SSS
+        in 99.5000..99.9998 -> 0.211 // SS+
+        in 99.9999..99.9999 -> 0.214 // SSS+
+        in 100.0000..100.4998 -> 0.216 // SSS
+        in 100.4999..100.4999 -> 0.222 // SSS
         in 100.5000..101.0000 -> 0.224 // SSS+
-        else -> 0.000
+        else -> 0.000 // < 10.0000%
     }
-
-    return floor(songLevel * multiplierFactor * formatScore).toInt()
+    if (formatScore >= 100.5) formatScore = 100.5F
+    return (songLevel * multiplierFactor * formatScore).toInt()
 }
 
 fun generateSongScore(data: MaimaiMusicDetail): Image {
@@ -358,8 +360,7 @@ fun generateB50(data: MaimaiMusicDetailList) {
                         space = 15.dp,
                         modifier = Modifier().fillMaxSize()
                     ) {
-                        for ((index, music) in b35List.withIndex()) {
-                            if (index == 35) break
+                        for (music in b35List) {
                             Box(modifier = Modifier(380.dp, 180.dp)) {
                                 Image(
                                     image = generateSongScore(music)
@@ -392,8 +393,7 @@ fun generateB50(data: MaimaiMusicDetailList) {
                         space = 15.dp,
                         modifier = Modifier().fillMaxSize()
                     ) {
-                        for ((index, music) in b15List.withIndex()) {
-                            if (index == 15) break
+                        for (music in b15List) {
                             Box(modifier = Modifier(380.dp, 180.dp)) {
                                 Image(
                                     image = generateSongScore(music)
