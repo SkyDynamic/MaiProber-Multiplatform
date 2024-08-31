@@ -10,28 +10,24 @@ import io.github.skydynamic.maiprober.util.config.Config
 import io.github.skydynamic.maiprober.util.config.ConfigStorage
 
 @Composable
-fun SettingCompose(theme: ColorScheme) {
-    val config:ConfigStorage by Config
+fun SettingCompose() {
+    val config: ConfigStorage by Config
 
-    MaterialTheme(
-        colorScheme = theme
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Spacer(Modifier.height(15.dp))
-
-            SettingItem(
-                text = "启用数据缓存",
-                subtext = "启用后, 将会在查分后缓存所有成绩的记录\n开启后会导致查分速度变慢",
-                initialValue = config.settings.useCache,
-                onSettingChange = { newValue ->
-                    config.settings.useCache = newValue
-                    Config.write()
-                }
-            )
-        }
+        SettingItem(
+            modifier = Modifier.padding(top = 15.dp),
+            text = "启用数据缓存",
+            subtext = "启用后, 将会在查分后缓存所有成绩的记录\n开启后会导致查分速度变慢",
+            initialValue = config.settings.useCache,
+            onSettingChange = { newValue ->
+                config.settings.useCache = newValue
+                Config.write()
+            }
+        )
     }
+
 }

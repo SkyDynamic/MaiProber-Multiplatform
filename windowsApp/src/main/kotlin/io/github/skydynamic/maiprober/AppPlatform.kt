@@ -7,17 +7,16 @@ import java.lang.management.ManagementFactory
 
 object AppPlatform : Platform {
 
-    private val delegate by lazy {
+    private val delegate= run {
         val os = ManagementFactory.getOperatingSystemMXBean()
         val osName = os.name
-        println("Running on $osName")
         if (os.name.lowercase().contains("windows")) {
             val plat = WindowsPlatformImpl()
-            return@lazy plat
+            return@run plat
         }
         if (os.name.lowercase().contains("mac")) {
             val plat = MacOSPlatformImpl()
-            return@lazy plat
+            return@run plat
         }
         throw RuntimeException("Unsupported Platform: $osName")
     }

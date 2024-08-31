@@ -52,10 +52,10 @@ fun mainComposable() {
         )
     }
 
-    val pages = listOf(
-        @Composable { DivingFishCompose(theme) },
-        @Composable { MaimaiB50GenerateCompose(theme) },
-        @Composable { SettingCompose(theme) }
+    val pages: List<@Composable () -> Unit> = listOf(
+        @Composable { DivingFishCompose() },
+        @Composable { MaimaiB50GenerateCompose() },
+        @Composable { SettingCompose() }
     )
 
     valueUpdater = {
@@ -176,6 +176,7 @@ fun main() {
     application {
         Window(
             onCloseRequest = {
+                println("?")
                 AppPlatform.rollbackSystemProxy()
                 Config.write()
                 exitApplication()

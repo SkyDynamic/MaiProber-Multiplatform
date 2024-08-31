@@ -15,20 +15,20 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SettingItem(
+    modifier: Modifier = Modifier,
     text: String,
     subtext: String,
     initialValue: Boolean,
     onSettingChange: (Boolean) -> Unit
 ) {
-
     var value by remember { mutableStateOf(initialValue) }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth().height(80.dp).padding(horizontal = 15.dp)
+        modifier = modifier.fillMaxWidth().height(80.dp).padding(horizontal = 15.dp)
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 15.dp)
+            modifier = modifier.padding(horizontal = 15.dp)
         ) {
             Text(
                 text = buildAnnotatedString {

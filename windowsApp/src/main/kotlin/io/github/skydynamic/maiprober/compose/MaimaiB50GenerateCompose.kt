@@ -25,12 +25,14 @@ enum class MaimaiB50Platform(val id: String, val index: Int) {
 }
 
 fun generateB50(platform: MaimaiB50Platform) {
-    when(platform) {
+    when (platform) {
         MaimaiB50Platform.LocalCache -> {
             io.github.skydynamic.maiprober.util.generateB50(MaimaiMusicDetailList.getCache())
         }
+
         MaimaiB50Platform.DivingFish -> {
         }
+
         MaimaiB50Platform.Lxns -> {
         }
     }
@@ -38,7 +40,7 @@ fun generateB50(platform: MaimaiB50Platform) {
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
-fun MaimaiB50GenerateCompose(theme: ColorScheme) {
+fun MaimaiB50GenerateCompose() {
     var selectedPlatformIndex by remember { mutableStateOf(0) }
     var isExpandedDropdownMenu by remember { mutableStateOf(false) }
     var openDownloadJacketAskDialog by mutableStateOf(false)
@@ -47,97 +49,93 @@ fun MaimaiB50GenerateCompose(theme: ColorScheme) {
 
     val proberPlatformList = MaimaiB50Platform.entries
 
-    MaterialTheme(
-        colorScheme = theme
-    ) {
-        when {
-            openDownloadJacketAskDialog -> {
-                confirmDialog(
-                    info = "尚未下载曲绘, 是否现在下载",
-                    onConfirm = {
-                        downloadStartSignal.connect { openDownloadJacketStartedDialog = true }
-                        downloadFinishSignal.connect { openDownloadJacketFinishedDialog = true }
-                        GlobalScope.launch {
-                            downloadSongsIcon()
-                        }
-                        openDownloadJacketAskDialog = false
-                    },
-                    onCancel = {
-                        openDownloadJacketAskDialog = false
+    when {
+        openDownloadJacketAskDialog -> {
+            confirmDialog(
+                info = "尚未下载曲绘, 是否现在下载",
+                onConfirm = {
+                    downloadStartSignal.connect { openDownloadJacketStartedDialog = true }
+                    downloadFinishSignal.connect { openDownloadJacketFinishedDialog = true }
+                    GlobalScope.launch {
+                        downloadSongsIcon()
                     }
-                )
-            }
-
-            openDownloadJacketStartedDialog -> {
-                DialogCompose.infoDialog(
-                    info = "正在下载曲绘, 请稍后",
-                    onRequest = { openDownloadJacketStartedDialog = false }
-                )
-            }
-
-            openDownloadJacketFinishedDialog -> {
-                DialogCompose.infoDialog(
-                    info = "下载曲绘完成",
-                    onRequest = { openDownloadJacketFinishedDialog = false }
-                )
-            }
+                    openDownloadJacketAskDialog = false
+                },
+                onCancel = {
+                    openDownloadJacketAskDialog = false
+                }
+            )
         }
 
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(modifier = Modifier.padding(16.dp)) {
-                ExposedDropdownMenuBox(
+        openDownloadJacketStartedDialog -> {
+            DialogCompose.infoDialog(
+                info = "正在下载曲绘, 请稍后",
+                onRequest = { openDownloadJacketStartedDialog = false }
+            )
+        }
+
+        openDownloadJacketFinishedDialog -> {
+            DialogCompose.infoDialog(
+                info = "下载曲绘完成",
+                onRequest = { openDownloadJacketFinishedDialog = false }
+            )
+        }
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(modifier = Modifier.padding(16.dp)) {
+            ExposedDropdownMenuBox(
+                expanded = isExpandedDropdownMenu,
+                onExpandedChange = { isExpandedDropdownMenu = !isExpandedDropdownMenu }
+            ) {
+                TextField(
+                    readOnly = true,
+                    value = proberPlatformList[selectedPlatformIndex].id,
+                    onValueChange = { },
+                    label = { Text("查分使用的平台") },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(
+                            expanded = isExpandedDropdownMenu
+                        )
+                    },
+                    modifier = Modifier.menuAnchor()
+                )
+
+                ExposedDropdownMenu(
                     expanded = isExpandedDropdownMenu,
-                    onExpandedChange = { isExpandedDropdownMenu = !isExpandedDropdownMenu }
+                    onDismissRequest = { isExpandedDropdownMenu = false },
                 ) {
-                    TextField(
-                        readOnly = true,
-                        value = proberPlatformList[selectedPlatformIndex].id,
-                        onValueChange = { },
-                        label = { Text("查分使用的平台") },
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(
-                                expanded = isExpandedDropdownMenu
-                            )
-                        },
-                        modifier = Modifier.menuAnchor()
-                    )
-
-                    ExposedDropdownMenu(
-                        expanded = isExpandedDropdownMenu,
-                        onDismissRequest = { isExpandedDropdownMenu = false },
-                    ) {
-                        for (platform in proberPlatformList) {
-                            DropdownMenuItem(
-                                text = {
-                                    Text(platform.id)
-                                },
-                                onClick = {
-                                    selectedPlatformIndex = platform.index
-                                    isExpandedDropdownMenu = false
-                                }
-                            )
-                        }
+                    for (platform in proberPlatformList) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(platform.id)
+                            },
+                            onClick = {
+                                selectedPlatformIndex = platform.index
+                                isExpandedDropdownMenu = false
+                            }
+                        )
                     }
                 }
+            }
 
-                Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
-                Button(
-                    onClick = {
-                        if (!jacketSavePath.exists()) {
-                            openDownloadJacketAskDialog = true
-                        }
-                        GlobalScope.launch(Dispatchers.IO) {
-                            generateB50(proberPlatformList[selectedPlatformIndex])
-                        }
+            Button(
+                onClick = {
+                    if (!jacketSavePath.exists()) {
+                        openDownloadJacketAskDialog = true
                     }
-                ) {
-                    Text("生成B50")
+                    GlobalScope.launch(Dispatchers.IO) {
+                        generateB50(proberPlatformList[selectedPlatformIndex])
+                    }
                 }
+            ) {
+                Text("生成B50")
             }
         }
     }
