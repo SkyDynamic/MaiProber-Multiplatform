@@ -90,6 +90,7 @@ fun DivingFishCompose() {
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
         ) {
             Button(
@@ -142,7 +143,7 @@ fun DivingFishCompose() {
                         }
                     }
                 },
-                modifier = Modifier.width(290.dp).height(50.dp),
+                modifier = Modifier.width(290.dp).height(50.dp).padding(5.dp),
                 enabled = !viewModel.settingUpInProgress
             ) {
                 Icon(
@@ -159,7 +160,7 @@ fun DivingFishCompose() {
                 onClick = {
                     AppPlatform.openWechat()
                 }, // Only Windows
-                modifier = Modifier.width(290.dp).height(50.dp),
+                modifier = Modifier.width(290.dp).height(50.dp).padding(5.dp),
             ) {
                 Icon(
                     Icons.Default.Create,
