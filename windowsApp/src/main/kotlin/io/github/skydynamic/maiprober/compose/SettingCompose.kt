@@ -1,7 +1,6 @@
 package io.github.skydynamic.maiprober.compose
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier

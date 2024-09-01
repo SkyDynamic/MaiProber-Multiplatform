@@ -1,7 +1,7 @@
 package io.github.skydynamic.maiprober.util.config
 
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.decodeFromString
+import net.mamoe.yamlkt.Yaml
 import kotlin.io.path.*
 import kotlin.reflect.KProperty
 
@@ -10,17 +10,13 @@ object Config {
     lateinit var configStorage: ConfigStorage
     val settings
         get() = configStorage.settings
-    private val configPath = Path("./config.json")
-    private val json = Json {
-        encodeDefaults = true
-        ignoreUnknownKeys = true
-        prettyPrint = true
-    }
+    private val configPath = Path("./config.yaml")
+    private val yaml = Yaml()
 
     fun read() {
         try{
             if (configPath.exists()) {
-                configStorage = json.decodeFromString(configPath.readText())
+                configStorage = yaml.decodeFromString(configPath.readText())
             } else {
                 configStorage = ConfigStorage()
                 write()
@@ -35,7 +31,7 @@ object Config {
     fun write(){
         configPath.deleteIfExists()
         configPath.createFile()
-        configPath.writeText(json.encodeToString(configStorage))
+        configPath.writeText(yaml.encodeToString(configStorage))
     }
 
     fun getValue(){
