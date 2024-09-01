@@ -18,7 +18,6 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.File
 import kotlin.io.path.exists
 
 enum class MaimaiB50Platform(val id: String, val index: Int) {
@@ -159,7 +158,7 @@ fun MaimaiB50GenerateCompose() {
         }
 
         if (viewModel.showB50Image) {
-            val image = rememberAsyncImagePainter(File("data/maimai/b50/output_${viewModel.timestamp}.png"))
+            val image = rememberAsyncImagePainter("data/maimai/b50/output_${viewModel.timestamp}.png")
             Image(
                 painter = image,
                 contentDescription = null,

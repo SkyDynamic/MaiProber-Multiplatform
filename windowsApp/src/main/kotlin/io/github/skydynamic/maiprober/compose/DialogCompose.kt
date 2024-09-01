@@ -120,10 +120,12 @@ object DialogCompose {
         val minScale = 1f
         val maxScale = 5f
 
-        Dialog(onDismissRequest = { onRequest() }) {
+        Dialog(
+            onDismissRequest = { onRequest() }
+        ) {
             var cardSize by remember { mutableStateOf(Size.Zero) }
 
-            Card(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .layout { measurable, constraints ->
@@ -132,8 +134,7 @@ object DialogCompose {
                         layout(placeable.width, placeable.height) {
                             placeable.placeRelative(0, 0)
                         }
-                    },
-                shape = RoundedCornerShape(16.dp),
+                    }
             ) {
                 Image(
                     painter = image,

@@ -1,4 +1,4 @@
-package io.github.skydynamic.maiprober.compose
+package io.github.skydynamic.maiprober.compose.setting
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Slider
@@ -11,6 +11,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import io.github.skydynamic.maiprober.compose.colorPickerDialog
 import io.github.skydynamic.maiprober.util.asIcon
 import io.github.skydynamic.windowsapp.generated.resources.Res
 import io.github.skydynamic.windowsapp.generated.resources.color_palette_24px
@@ -30,7 +31,7 @@ fun SettingSliderItem(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier.fillMaxWidth().height(80.dp).padding(horizontal = 15.dp)
+        modifier = modifier.fillMaxWidth().height(80.dp)
     ) {
         SettingTextItem(text = text, subtext = subtext)
 
@@ -85,36 +86,30 @@ fun SettingColorEditorItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.fillMaxWidth().height(80.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = modifier.fillMaxWidth().height(80.dp).padding(horizontal = 15.dp)
+        SettingTextItem(text = text, subtext = subtext)
+
+        Spacer(Modifier.weight(1f))
+
+        IconButton(
+            onClick = {
+                openColorPickerDialog = true
+            },
+            modifier = Modifier.padding(end = 15.dp)
         ) {
-            SettingTextItem(text = text, subtext = subtext)
-
-            Spacer(Modifier.weight(1f))
-
-            IconButton(
-                onClick = {
-                    openColorPickerDialog = true
-                },
-                modifier = Modifier.padding(15.dp)
-            ) {
-                Icon(
-                    Res.drawable.color_palette_24px.asIcon(),
-                    null
-                )
-            }
-
-            TextField(
-                value = value,
-                onValueChange = {
-                    value = it
-                    onSettingChange(it)
-                },
-                modifier = Modifier.width(200.dp),
+            Icon(
+                Res.drawable.color_palette_24px.asIcon(),
+                null
             )
         }
+
+        TextField(
+            value = value,
+            onValueChange = {
+                value = it
+                onSettingChange(it)
+            },
+            modifier = Modifier.width(200.dp),
+        )
     }
 }
 
@@ -131,7 +126,7 @@ fun SettingTextFiledItem(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier.fillMaxWidth().height(80.dp).padding(horizontal = 15.dp)
+        modifier = modifier.fillMaxWidth().height(80.dp)
     ) {
         SettingTextItem(text = text, subtext = subtext)
 
@@ -161,7 +156,7 @@ fun SettingSwitchItem(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier.fillMaxWidth().height(80.dp).padding(horizontal = 15.dp)
+        modifier = modifier.fillMaxWidth().height(80.dp)
     ) {
         SettingTextItem(text = text, subtext = subtext)
 
@@ -183,12 +178,12 @@ fun SettingTextItem(
     subtext: String
 ) {
     Column(
-        modifier = Modifier.padding(horizontal = 15.dp)
+        modifier = Modifier
     ) {
         Text(
             text = buildAnnotatedString {
                 withStyle(
-                    style = SpanStyle(fontWeight = FontWeight.W900)
+                    style = SpanStyle(fontWeight = FontWeight.Bold)
                 ) {
                     append(text)
                 }
