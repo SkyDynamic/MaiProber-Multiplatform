@@ -335,7 +335,7 @@ fun generateB50(data: MaimaiMusicDetailList, timestamp: Long) {
     ) {
         Box(modifier = Modifier().fillMaxSize()) {
             val color = "#d3edfa"
-            val colors = color.split(";", "；").map { ColorfulBackgroundGenerate.parseHexColor(color) }
+            val colors = color.split(";", "；").map { Color.makeRGB(it.trim()) }
             Image(
                 image = ColorfulBackgroundGenerate.makeCardBg(2080, 2540, colors, 12)
             )
