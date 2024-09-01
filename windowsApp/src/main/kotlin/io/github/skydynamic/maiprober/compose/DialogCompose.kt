@@ -24,7 +24,6 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import kotlin.math.absoluteValue
-import kotlin.math.pow
 
 object DialogCompose {
     @Composable

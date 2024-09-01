@@ -55,7 +55,7 @@ fun SettingCompose() {
             SettingSliderItem(
                 modifier = Modifier.padding(start = 15.dp, end = 15.dp),
                 text = "舞萌DX B50 背景相近颜色过渡区间",
-                subtext = "启用后, 将使用自定义背景",
+                subtext = "背景颜色的线性过渡区间",
                 minValue = 1F,
                 maxValue = 20F,
                 initialValue = config.settings.maimaiB50BackgroundLinearLayerCount.toFloat(),

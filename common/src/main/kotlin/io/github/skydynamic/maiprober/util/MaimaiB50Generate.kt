@@ -6,11 +6,7 @@ import io.github.skydynamic.maiprober.util.score.*
 import io.github.skydynamic.maiprober.util.score.MaimaiMusicKind.*
 import io.github.skydynamic.maiprober.util.singal.MaiproberSignal
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Semaphore
 import org.jetbrains.skia.*
@@ -20,21 +16,15 @@ import top.colter.skiko.*
 import top.colter.skiko.data.LayoutAlignment
 import top.colter.skiko.layout.*
 import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.exists
 import kotlin.io.path.readBytes
 
-// Use Lxns resource
-const val resourceUrl = "https://assets2.lxns.net/maimai"
-const val iconResourceUrl = "$resourceUrl/icon"
-const val jacketResourceUrl = "$resourceUrl/jacket"
-
 const val latestMaimaiVersion = 24000
 
-val jacketSavePath = Path("./resources/jacket")
+val jacketSavePath = Path("./resources/maimai/jacket")
+val iconSavePath = Path("./resources/maimai/icon")
+val plateSavePath = Path("./resources/maimai/plate")
 
 val client = HttpClient(CIO)
 
@@ -53,66 +43,9 @@ val songScoreBackgroundColorList = listOf(
     Color.makeRGB(210, 160, 245)
 )
 
-val downloadStartSignal = MaiproberSignal<Unit>()
-val downloadFinishSignal = MaiproberSignal<Unit>()
-
 val showImageSignal = MaiproberSignal<Unit>()
 
 val config: ConfigStorage by Config
-
-@OptIn(DelicateCoroutinesApi::class)
-suspend fun downloadSongsIcon() {
-    if (!jacketSavePath.exists()) jacketSavePath.toFile().mkdirs()
-    downloadStartSignal.emit(Unit)
-    val jobs = mutableListOf<Job>()
-
-    val semaphore = Semaphore(36)
-
-    MAIMAI_SONG_INFO.forEach { songInfo ->
-        val job = GlobalScope.async(Dispatchers.IO) {
-            semaphore.acquire()
-            downloadWithRetry(songInfo, jacketSavePath, jacketResourceUrl)
-            semaphore.release()
-        }
-        jobs.add(job)
-    }
-
-    jobs.joinAll()
-
-    downloadFinishSignal.emit(Unit)
-}
-
-suspend fun downloadWithRetry(
-    songInfo: MaimaiSongInfo, savePath: Path,
-    resourceUrl: String, maxRetries: Int = 3,
-    delayMillis: Long = 1000L
-) {
-    var retries = 0
-    while (retries <= maxRetries) {
-        val url = "$resourceUrl/${songInfo.id}.png"
-        val resp: HttpResponse = client.get(url)
-
-        if (resp.status.isSuccess()) {
-            val inputStream: InputStream = resp.body()
-            withContext(Dispatchers.IO) {
-                val outputFile = savePath.resolve("${songInfo.id}.png").toFile()
-                FileOutputStream(outputFile).use { outputStream ->
-                    inputStream.copyTo(outputStream)
-                }
-            }
-            return
-        } else {
-            if (resp.status == HttpStatusCode.NotFound) continue
-            retries++
-            if (retries > maxRetries) {
-                logger.error("Failed to download $url after $maxRetries retries.")
-                return
-            }
-            logger.warn("Failed to download $url. Retrying... ($retries/$maxRetries)")
-            delay(delayMillis)
-        }
-    }
-}
 
 fun calcScore(score: String, songLevel: Float): Int {
     var formatScore = score.replace("%", "").toFloat()
@@ -153,7 +86,11 @@ fun generateSongScore(data: MaimaiMusicDetail): Image {
     if (!iconPath.exists()) {
         if (songInfo != null) {
             runBlocking {
-                downloadWithRetry(songInfo, jacketSavePath, jacketResourceUrl)
+                if (!jacketSavePath.exists()) jacketSavePath.toFile().mkdirs()
+                downloadWithRetry(
+                    url = "$jacketResourceUrl/${songInfo.id}.png",
+                    savePath = jacketSavePath.resolve("${songInfo.id}.png")
+                )
             }
         } else {
             logger.error("Song info not found for ${data.name}")
@@ -321,6 +258,7 @@ fun generateSongScore(data: MaimaiMusicDetail): Image {
 }
 
 
+@OptIn(DelicateCoroutinesApi::class)
 fun generateB50(data: MaimaiMusicDetailList, timestamp: Long) {
     val musicList = data.songs
     var rating = 0
@@ -329,6 +267,22 @@ fun generateB50(data: MaimaiMusicDetailList, timestamp: Long) {
 
     b35List.forEach { rating += it.rating }
     b15List.forEach { rating += it.rating }
+
+    val iconNotFoundList = mutableListOf<DownloadInfo>()
+    (b35List + b15List).forEach {
+        val id = MAIMAI_SONG_INFO.find { info ->
+            info.title == it.name
+        }?.id ?: -1
+        if (!jacketSavePath.resolve("${id}.png").exists()) {
+            iconNotFoundList.add(DownloadInfo(url = jacketResourceUrl + "/${id}.png", fileName = "${id}.png"))
+        }
+    }
+
+    if (iconNotFoundList.isNotEmpty()) {
+        runBlocking {
+            downloadUrlsWithNotSignal(iconNotFoundList, jacketSavePath)
+        }
+    }
 
     val saveFile = File("data/maimai/b50/output_$timestamp.png")
     if (!saveFile.exists()) saveFile.parentFile.mkdirs()

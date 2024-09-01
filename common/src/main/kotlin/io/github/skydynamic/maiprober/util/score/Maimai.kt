@@ -16,18 +16,38 @@ val JSON = Json {
     encodeDefaults = true
 }
 
-val MAIMAI_SONG_INFO: List<MaimaiSongInfo> = MaimaiSongInfoPath.getMaimaiSongInfoFile()?.let {
+val MAIMAI_SONG_INFO: List<MaimaiSongInfo> = MaimaiInterfaceResourcePath.getMaimaiSongInfoFile()?.let {
     Json.decodeFromString(
         it.readText()
     )
 } ?: listOf()
 
-class MaimaiSongInfoPath {
-    companion object {
-        @JvmStatic
-        fun getMaimaiSongInfoFile() : URL? {
-            return Companion::class.java.classLoader.getResource("maimai/song_info.json")
-        }
+val MAIMAI_ICON_LIST: List<Int> = MaimaiInterfaceResourcePath.getMaimaiIconListFile()?.let {
+    Json.decodeFromString(
+        it.readText()
+    )
+} ?: listOf()
+
+val MAIMAI_PLATE_LIST: List<Int> = MaimaiInterfaceResourcePath.getMaimaiPlateListFile()?.let {
+    Json.decodeFromString(
+        it.readText()
+    )
+} ?: listOf()
+
+object MaimaiInterfaceResourcePath {
+    @JvmStatic
+    fun getMaimaiSongInfoFile() : URL? {
+        return this::class.java.classLoader.getResource("maimai/song_info.json")
+    }
+
+    @JvmStatic
+    fun getMaimaiIconListFile() : URL? {
+        return this::class.java.classLoader.getResource("maimai/icon_list.json")
+    }
+
+    @JvmStatic
+    fun getMaimaiPlateListFile() : URL? {
+        return this::class.java.classLoader.getResource("maimai/plate_list.json")
     }
 }
 
