@@ -1,5 +1,7 @@
 package io.github.skydynamic.maiprober.util
 
+import io.github.skydynamic.maiprober.util.config.Config
+import io.github.skydynamic.maiprober.util.config.ConfigStorage
 import io.github.skydynamic.maiprober.util.score.*
 import io.github.skydynamic.maiprober.util.score.MaimaiMusicKind.*
 import io.github.skydynamic.maiprober.util.singal.MaiproberSignal
@@ -55,6 +57,8 @@ val downloadStartSignal = MaiproberSignal<Unit>()
 val downloadFinishSignal = MaiproberSignal<Unit>()
 
 val showImageSignal = MaiproberSignal<Unit>()
+
+val config: ConfigStorage by Config
 
 @OptIn(DelicateCoroutinesApi::class)
 suspend fun downloadSongsIcon() {
@@ -334,10 +338,14 @@ fun generateB50(data: MaimaiMusicDetailList, timestamp: Long) {
         modifier = Modifier().width(2080.dp).height(2540.dp)
     ) {
         Box(modifier = Modifier().fillMaxSize()) {
-            val color = "#d3edfa"
+            val color = Config.settings.maimaiB50BackgroundColor
             val colors = color.split(";", "；").map { Color.makeRGB(it.trim()) }
+            val linearLayoutCount = when (Config.settings.maimaiB50BackgroundLinearLayerCount) {
+                in 1..20 -> Config.settings.maimaiB50BackgroundLinearLayerCount
+                else -> 12
+            }
             Image(
-                image = ColorfulBackgroundGenerate.makeCardBg(2080, 2540, colors, 12)
+                image = ColorfulBackgroundGenerate.makeCardBg(2080, 2540, colors, linearLayoutCount)
             )
         }
         Column(modifier = Modifier().fillMaxSize().padding(60.dp)) {

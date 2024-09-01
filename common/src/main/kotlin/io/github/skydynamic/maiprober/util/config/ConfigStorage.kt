@@ -24,5 +24,15 @@ data class ConfigStorage(
 @Serializable
 data class Settings(
     @Comment("使用数据缓存")
-    var useCache: Boolean = false
+    var useCache: Boolean = false,
+    @Comment("""
+        线性背景颜色色调(可多个, 使用' : '分隔)
+        例如: '#d3edfa;#cc9c2'
+    """)
+    var maimaiB50BackgroundColor: String = "#d3edfa",
+    @Comment("""
+        线性背景相近颜色过度级别(min = 1, max = 20)
+        例如: '12'
+    """)
+    var maimaiB50BackgroundLinearLayerCount: Int = 12
 )

@@ -156,7 +156,6 @@ fun mainComposable() {
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start = 80.dp)
                         .fillMaxHeight()
                         .verticalScroll(scrollState)
                 ) {
