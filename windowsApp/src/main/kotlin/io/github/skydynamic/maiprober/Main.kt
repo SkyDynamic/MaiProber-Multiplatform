@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -98,6 +99,7 @@ fun mainComposable() {
                     },
                     modifier = Modifier.width(80.dp).fillMaxHeight()
                 ) {
+
                     NavigationRailItem(
                         selected = selectedItem.value == "diving_fish",
                         icon = {
@@ -169,36 +171,36 @@ fun mainComposable() {
                         },
                         label = { Text("资源下载", style = MaterialTheme.typography.bodyMedium) },
                         onClick = {
-                           coroutineScope.launch {
-                               drawerState.close()
-                           }
+                            coroutineScope.launch {
+                                drawerState.close()
+                            }
                             pageIndex = 3
                             selectedItem.value = "resource"
                         }
                     )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    NavigationRailItem(
-                        modifier = Modifier.padding(bottom = 15.dp),
-                        selected = selectedItem.value == "downloadTasks",
-                        icon = {
-                            Icon(
-                                Res.drawable.download_icon_24px.asIcon(),
-                                "",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(28.dp)
-                            )
-                        },
-                        label = { Text("下载任务", style = MaterialTheme.typography.bodyMedium) },
-                        onClick = {
-                            coroutineScope.launch {
-                                drawerState.close()
+                    Box(modifier = Modifier.weight(1f)) {
+                        NavigationRailItem(
+                            modifier = Modifier.padding(bottom = 15.dp).align(Alignment.BottomCenter),
+                            selected = selectedItem.value == "downloadTasks",
+                            icon = {
+                                Icon(
+                                    Res.drawable.download_icon_24px.asIcon(),
+                                    "",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            },
+                            label = { Text("下载任务", style = MaterialTheme.typography.bodyMedium) },
+                            onClick = {
+                                coroutineScope.launch {
+                                    drawerState.close()
+                                }
+                                pageIndex = 4
+                                selectedItem.value = "downloadTasks"
                             }
-                            pageIndex = 4
-                            selectedItem.value = "downloadTasks"
-                        }
-                    )
+                        )
+                    }
+
                 }
 
                 Column(

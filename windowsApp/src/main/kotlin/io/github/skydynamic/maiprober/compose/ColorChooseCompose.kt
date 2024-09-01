@@ -2,7 +2,7 @@ package io.github.skydynamic.maiprober.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,11 +38,9 @@ fun colorPickerDialog(
                 SliderRow("Green", green.toFloat(), 0f, 255f) { green = it.toInt() }
                 SliderRow("Blue", blue.toFloat(), 0f, 255f) { blue = it.toInt() }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
                 Text(
                     text = "Hex: ${hexColor.value}",
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 8.dp, top = 16.dp)
                 )
 
                 Box(
@@ -108,13 +106,11 @@ fun SliderRow(
             text = "%.0f".format(value),
         )
 
-        Spacer(modifier = Modifier.width(8.dp))
-
         Slider(
             value = value,
             valueRange = minValue..maxValue,
             onValueChange = onValueChange,
-            modifier = Modifier.width(200.dp)
+            modifier = Modifier.width(200.dp).padding(start = 8.dp)
         )
     }
 }

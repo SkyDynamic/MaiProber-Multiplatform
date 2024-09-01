@@ -94,10 +94,8 @@ fun MaimaiB50GenerateCompose() {
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
             Button(
+                modifier = Modifier.padding(start = 16.dp),
                 onClick = {
                     viewModel.timestamp = System.currentTimeMillis()
                     GlobalScope.launch(Dispatchers.IO) {

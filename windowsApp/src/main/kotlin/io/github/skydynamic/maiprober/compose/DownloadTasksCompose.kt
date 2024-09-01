@@ -66,17 +66,18 @@ fun MultiDownloadTaskDetailCompose(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Column {
+            Column(
+                modifier = Modifier.wrapContentSize().padding(end = 5.dp)
+            ) {
                 Text(text = title)
                 Text(text = "${taskData.finishedNum} / ${taskData.maxSize}")
             }
-            Spacer(modifier = Modifier.weight(1.0f))
 
             LinearProgressIndicator(
                 progress = {
                     taskData.finishedNum.toFloat() / taskData.maxSize
                 },
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
+                modifier = Modifier.weight(1f).padding(8.dp),
             )
         }
     }

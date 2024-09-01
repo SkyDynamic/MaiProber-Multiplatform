@@ -86,12 +86,10 @@ fun DivingFishCompose() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Spacer(Modifier.height(15.dp))
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp).padding(top = 15.dp),
         ) {
             Button(
                 onClick = {
@@ -171,9 +169,8 @@ fun DivingFishCompose() {
             }
         }
 
-        Spacer(Modifier.height(15.dp))
-
         Row(
+            modifier = Modifier.padding(top = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text("舞萌DX  ")
@@ -193,9 +190,8 @@ fun DivingFishCompose() {
             Text("  中二节奏")
         }
 
-        Spacer(Modifier.height(15.dp))
-
         TextField(
+            modifier = Modifier.padding(top = 15.dp),
             value = viewModel.username,
             onValueChange = {
                 viewModel.username = it
@@ -207,9 +203,8 @@ fun DivingFishCompose() {
             label = { Text("账号") }
         )
 
-        Spacer(Modifier.height(15.dp))
-
         TextField(
+            modifier = Modifier.padding(top = 15.dp),
             value = viewModel.password,
             onValueChange = {
                 viewModel.password = it
@@ -240,9 +235,8 @@ fun DivingFishCompose() {
             visualTransformation = if (!viewModel.passwordHidden) PasswordVisualTransformation() else VisualTransformation.None
         )
 
-        Spacer(Modifier.height(15.dp))
-
         Row(
+            modifier = Modifier.padding(top = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Checkbox(
@@ -253,8 +247,6 @@ fun DivingFishCompose() {
                 "记住账号密码"
             )
         }
-
-        Spacer(Modifier.height(15.dp))
 
         Button(
             onClick = {
@@ -271,7 +263,7 @@ fun DivingFishCompose() {
                 }
             },
             enabled = viewModel.proxyRunning,
-            modifier = Modifier.width(300.dp).height(50.dp),
+            modifier = Modifier.width(300.dp).height(50.dp).padding(top = 15.dp),
         ) {
             Icon(
                 Icons.Default.Build,
