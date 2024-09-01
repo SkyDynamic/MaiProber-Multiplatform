@@ -41,3 +41,5 @@ bin/
 /local.properties
 /logs/
 .idea
+
+/tool/*.json

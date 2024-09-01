@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,6 +24,7 @@ import io.github.skydynamic.maiprober.MaimaiProberMain
 import io.github.skydynamic.maiprober.util.ClipDataUtil
 import io.github.skydynamic.maiprober.util.OauthTokenUtil
 import io.github.skydynamic.maiprober.util.asIcon
+import io.github.skydynamic.maiprober.util.prober.ProberPlatform
 import io.github.skydynamic.windowsapp.generated.resources.Res
 import io.github.skydynamic.windowsapp.generated.resources.eye_hidden_24px
 import io.github.skydynamic.windowsapp.generated.resources.eye_show_24px
@@ -54,6 +56,8 @@ object DivingFishViewModel : ViewModel() {
 @OptIn(DelicateCoroutinesApi::class)
 fun DivingFishCompose() {
     val viewModel = remember { DivingFishViewModel }
+
+    val proberUtil = ProberPlatform.DIVING_FISH.factory
 
     when {
         viewModel.openCopySuccessDialog -> {
@@ -99,7 +103,6 @@ fun DivingFishCompose() {
                         GlobalScope.launch(Dispatchers.IO) {
                             try {
                                 val config = maimaiProberMain.getConfig()
-                                val proberUtil = maimaiProberMain.getConfig().platform.factory
                                 proberUtil.updateStartedSignal.connect {
                                     viewModel.openUpdateScoreStartedDialog = true
                                 }
@@ -167,6 +170,27 @@ fun DivingFishCompose() {
                 )
                 Text("打开微信")
             }
+        }
+
+        Button(
+            onClick = {
+                GlobalScope.launch(Dispatchers.IO) {
+                    proberUtil.updateAccountInfo(viewModel.username, viewModel.password)
+                }
+                if (!viewModel.saveUsernameAndPassword) {
+                    maimaiProberMain.getConfig().userName = ""
+                    maimaiProberMain.getConfig().password = ""
+                }
+                maimaiProberMain.saveConfig()
+            },
+            modifier = Modifier.width(290.dp).height(50.dp).padding(top = 15.dp),
+        ) {
+            Icon(
+                Icons.Default.Refresh,
+                "",
+                modifier = Modifier.size(28.dp)
+            )
+            Text("更新个人资料")
         }
 
         Row(

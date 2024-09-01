@@ -2,6 +2,7 @@ package io.github.skydynamic.maiprober.util.config
 
 import io.github.skydynamic.maiprober.util.OauthTokenUtil
 import io.github.skydynamic.maiprober.util.prober.ProberPlatform
+import io.github.skydynamic.maiprober.util.score.MaimaiDan
 import kotlinx.serialization.Serializable
 import net.mamoe.yamlkt.Comment
 
@@ -17,8 +18,27 @@ data class ConfigStorage(
     var userName: String = "",
     @Comment("水鱼查分器密码")
     var password: String = "",
+    @Comment("查分器 Token, 用于获取个人信息 / 游玩记录")
+    var token: ProberToken = ProberToken(),
+    @Comment("个人信息")
+    var personalInfo: ProberUserInfo = ProberUserInfo(),
     @Comment("WindowApp设置")
     var settings: Settings = Settings()
+)
+
+@Serializable
+data class ProberToken(
+    var divingFish: String = "",
+    var lxns: String = ""
+)
+
+@Serializable
+data class ProberUserInfo(
+    var name: String = "",
+    var maimaiDan: MaimaiDan = MaimaiDan.DAN0,
+    var maimaiIcon: Int = 1,
+    var maimaiPlate: Int = 1,
+    var maimaiTitle: String = ""
 )
 
 @Serializable

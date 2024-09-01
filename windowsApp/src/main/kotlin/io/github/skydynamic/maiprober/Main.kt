@@ -236,7 +236,7 @@ fun main() {
         ) {
             val density = LocalDensity.current
             val width = 500.dp
-            val height = 500.dp
+            val height = 750.dp
             LaunchedEffect(density) {
                 window.minimumSize = with(density) {
                     if (hostOs.isWindows) {

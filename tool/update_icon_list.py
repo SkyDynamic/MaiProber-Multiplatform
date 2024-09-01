@@ -4,7 +4,7 @@ from httpx import AsyncClient
 
 client = AsyncClient()
 
-async def update_song_id():
+async def update_icon_id():
     song_info = []
     result = await client.get("https://maimai.lxns.net/api/v0/maimai/icon/list")
     for icon in result.json()["icons"]:
@@ -15,4 +15,4 @@ async def update_song_id():
 
 if __name__ == "__main__":
     import asyncio
-    asyncio.run(update_song_id())
+    asyncio.run(update_icon_id())

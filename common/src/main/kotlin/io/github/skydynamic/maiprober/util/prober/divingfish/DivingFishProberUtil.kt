@@ -3,9 +3,11 @@ package io.github.skydynamic.maiprober.util.prober.divingfish
 import io.github.skydynamic.maiprober.Constant
 import io.github.skydynamic.maiprober.util.ParseScorePageUtil
 import io.github.skydynamic.maiprober.util.config.Config
+import io.github.skydynamic.maiprober.util.config.ProberUserInfo
 import io.github.skydynamic.maiprober.util.prober.LoginData
 import io.github.skydynamic.maiprober.util.prober.interfact.ProberUtil
 import io.github.skydynamic.maiprober.util.score.ChunithmMusicDetailList
+import io.github.skydynamic.maiprober.util.score.MaimaiDan
 import io.github.skydynamic.maiprober.util.score.MaimaiDifficulty
 import io.github.skydynamic.maiprober.util.score.MaimaiMusicDetailList
 import io.github.skydynamic.maiprober.util.singal.MaiproberSignal
@@ -21,7 +23,9 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
@@ -58,8 +62,24 @@ class DivingFishProberUtil : ProberUtil {
 
     private val logger: Logger = LoggerFactory.getLogger("MaimaiDX-Prober-Kotlin")
     private lateinit var jwtToken: Cookie
+
     @Serializable
     data class LoginResponse(val errcode: Int? = null, val message: String)
+
+    @Serializable
+    data class PlayerProfile(
+        val username: String,
+        val nickname: String,
+        @SerialName("additional_rating") val additionalRating: Int,
+        @SerialName("bind_qq") val bindQQ: Int,
+        @SerialName("qq_channel_uid") val qqChannelUid: String,
+        val privacy: Boolean,
+        val mask: Boolean,
+        @SerialName("accept_agreement") val acceptAgreement: Boolean,
+        val plate: String,
+        @SerialName("user_general_data") val userGeneralData: String? = null,
+        @SerialName("import_token") val importToken: String,
+    )
 
     private val updateStartedSignalBuilder = MaiproberSignal<String>()
     private val updateFinishedSignalBuilder = MaiproberSignal<String>()
@@ -82,6 +102,18 @@ class DivingFishProberUtil : ProberUtil {
         val cookies = loginResp.setCookie()
         jwtToken = cookies.find { it.name == "jwt_token" } ?: return false
         return true
+    }
+
+    override suspend fun updateAccountInfo(username: String, password: String) {
+        if (validateProberAccount(username, password)) {
+            val resp = client.get("https://www.diving-fish.com/api/maimaidxprober/player/profile")
+            val data: PlayerProfile = resp.body()
+            Config.configStorage.personalInfo = ProberUserInfo(
+                name = data.nickname,
+                maimaiDan = MaimaiDan.getDanByIndex(data.additionalRating)
+            )
+            Config.write()
+        }
     }
 
     override suspend fun uploadMaimaiProberData(

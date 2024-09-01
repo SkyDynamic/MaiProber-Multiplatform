@@ -8,7 +8,6 @@ import io.github.skydynamic.maiprober.util.singal.MaiproberSignal
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Semaphore
 import org.jetbrains.skia.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -75,6 +74,111 @@ fun calcScore(score: String, songLevel: Float): Int {
     }
     if (formatScore >= 100.5) formatScore = 100.5F
     return (songLevel * multiplierFactor * formatScore).toInt()
+}
+
+fun generatePlayerInfo(rating: Int): Image {
+    return return View(
+        modifier = Modifier(720.dp, 116.dp)
+    ) {
+        Box(modifier = Modifier().fillMaxSize()) {
+            Image(
+                image = Image.makeFromEncoded(
+                    plateSavePath.resolve("${config.personalInfo.maimaiPlate}.png").toFile().readBytes()
+                ),
+                modifier = Modifier().width(720.dp)
+            )
+            Row(
+                modifier = Modifier().fillMaxSize().padding(top = 5.dp, left = 5.dp)
+            ) {
+                Image(
+                    image = Image.makeFromEncoded(
+                        iconSavePath.resolve("${config.personalInfo.maimaiIcon}.png").toFile().readBytes()
+                    ),
+                    modifier = Modifier(106.dp, 106.dp)
+                )
+
+                Column(
+                    modifier = Modifier().fillMaxSize().padding(left = 5.dp)
+                ) {
+                    Box(
+                        modifier = Modifier().height(35.dp)
+                    ) {
+                        Image(
+                            image = Image.makeFromEncoded(
+                                ResourceManager.MaimaiResources.getDXRatingIconWithRating(rating).toFile().readBytes()
+                            ),
+                            modifier = Modifier().height(35.dp)
+                        )
+                        Box(
+                            modifier = Modifier().padding(right = 15.dp),
+                            alignment = LayoutAlignment.CENTER_RIGHT
+                        ) {
+                            Grid(
+                                maxLineCount = 5,
+                                space = 1.dp
+                            ) {
+                                for (i in rating.toString()) {
+                                    val int = i.toString().toInt()
+                                    Image(
+                                        image = Image.makeFromEncoded(
+                                            ResourceManager.MaimaiResources
+                                                .getNumberIconWihmNumber(int).toFile().readBytes()
+                                        ),
+                                        modifier = Modifier().height(15.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier().width(width / 2 - 110.dp)
+                            .height(40.dp)
+                            .padding(left = 10.dp)
+                            .border(8.dp, 8.dp, Color.TRANSPARENT)
+                            .background(Color.WHITE)
+                    ) {
+                        Text(
+                            text = config.personalInfo.name,
+                            fontSize = 36.dp,
+                            modifier = Modifier().fillMaxWidth(),
+                        )
+                        Box(
+                            modifier = Modifier().padding(right = 5.dp),
+                            alignment = LayoutAlignment.CENTER_RIGHT
+                        ) {
+                            Image(
+                                image = Image.makeFromEncoded(
+                                    ResourceManager.MaimaiResources
+                                        .getDanIconWithIndex(config.personalInfo.maimaiDan.danIndex)
+                                        .toFile()
+                                        .readBytes()
+                                ),
+                                modifier = Modifier().height(35.dp)
+                            )
+                        }
+                    }
+
+                    Box(Modifier().height(5.dp))
+
+                    Box(
+                        modifier = Modifier().width(width / 2 - 110.dp)
+                            .height(25.dp)
+                            .padding(left = 10.dp)
+                            .border(16.dp, 16.dp, Color.TRANSPARENT)
+                            .background(Color.WHITE)
+                    ) {
+                        Text(
+                            text = config.personalInfo.maimaiTitle,
+                            fontSize = 12.dp,
+                            modifier = Modifier().fillMaxWidth(),
+                            alignment = LayoutAlignment.CENTER
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 fun generateSongScore(data: MaimaiMusicDetail): Image {
@@ -258,7 +362,6 @@ fun generateSongScore(data: MaimaiMusicDetail): Image {
 }
 
 
-@OptIn(DelicateCoroutinesApi::class)
 fun generateB50(data: MaimaiMusicDetailList, timestamp: Long) {
     val musicList = data.songs
     var rating = 0
@@ -289,7 +392,7 @@ fun generateB50(data: MaimaiMusicDetailList, timestamp: Long) {
 
     View(
         file = saveFile,
-        modifier = Modifier().width(2080.dp).height(2540.dp)
+        modifier = Modifier().width(2080.dp).height(2750.dp)
     ) {
         Box(modifier = Modifier().fillMaxSize()) {
             val color = Config.settings.maimaiB50BackgroundColor
@@ -299,11 +402,21 @@ fun generateB50(data: MaimaiMusicDetailList, timestamp: Long) {
                 else -> 12
             }
             Image(
-                image = ColorfulBackgroundGenerate.makeCardBg(2080, 2540, colors, linearLayoutCount)
+                image = ColorfulBackgroundGenerate.makeCardBg(2080, 2750, colors, linearLayoutCount)
             )
         }
         Column(modifier = Modifier().fillMaxSize().padding(60.dp)) {
-            Box(modifier = Modifier().fillMaxWidth()) {
+            Box(
+                modifier = Modifier().fillMaxWidth()
+            ) {
+                Image(
+                    image = generatePlayerInfo(rating),
+                    modifier = Modifier().height(200.dp),
+                    alignment = LayoutAlignment.CENTER
+                )
+            }
+
+            Box(modifier = Modifier().fillMaxWidth().padding(top = 30.dp)) {
                 Column(modifier = Modifier().fillMaxSize()) {
                     Box(modifier = Modifier().fillMaxWidth().height(150.dp)) {
                         Box(modifier = Modifier().width(1500.dp).padding(left = 440.dp)) {

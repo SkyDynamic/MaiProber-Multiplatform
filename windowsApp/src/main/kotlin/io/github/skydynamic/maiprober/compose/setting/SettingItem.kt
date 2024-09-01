@@ -1,6 +1,10 @@
 package io.github.skydynamic.maiprober.compose.setting
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,8 +16,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import io.github.skydynamic.maiprober.compose.colorPickerDialog
 import io.github.skydynamic.maiprober.util.asIcon
+import io.github.skydynamic.maiprober.util.score.MaimaiDan
 import io.github.skydynamic.windowsapp.generated.resources.Res
 import io.github.skydynamic.windowsapp.generated.resources.color_palette_24px
+import java.util.Objects
 
 @Composable
 fun SettingSliderItem(
@@ -137,7 +143,8 @@ fun SettingTextFiledItem(
                 value = it
                 onSettingChange(it)
             },
-            modifier = Modifier.width(200.dp),
+            singleLine = true,
+            modifier = Modifier.width(200.dp).height(60.dp),
         )
     }
 }
@@ -168,6 +175,72 @@ fun SettingSwitchItem(
                 onSettingChange(it)
             },
         )
+    }
+}
+
+@Composable
+fun <T> SettingDropdownMenuItem(
+    modifier: Modifier,
+    text: String,
+    subtext: String,
+    initialValue: T,
+    itemList: List<T>,
+    onSettingChange: (T) -> Unit
+) {
+    val value by remember { mutableStateOf(initialValue) }
+    var isDropdownMenu by remember { mutableStateOf(false) }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier.fillMaxWidth().height(80.dp)
+    ) {
+        SettingTextItem(text = text, subtext = subtext)
+
+        Spacer(Modifier.weight(1f))
+
+        Column(modifier = Modifier.width(200.dp)) {
+            TextField(
+                modifier = Modifier.width(200.dp),
+                readOnly = true,
+                value = value.toString(),
+                onValueChange = { },
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            isDropdownMenu = true
+                        }
+                    ) {
+                        Icon(
+                            if (isDropdownMenu) Icons.Default.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
+                            null
+                        )
+                    }
+                }
+            )
+
+            DropdownMenu(
+                expanded = isDropdownMenu,
+                onDismissRequest = {
+                    isDropdownMenu = false
+                },
+                modifier = Modifier.width(200.dp)
+            ) {
+                itemList.forEach { item ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = item.toString()
+                            )
+                        },
+                        onClick = {
+                            isDropdownMenu = false
+                            onSettingChange(item)
+                        },
+                    )
+                }
+            }
+        }
     }
 }
 

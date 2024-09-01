@@ -5,12 +5,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.skydynamic.maiprober.compose.setting.SettingColorEditorItem
-import io.github.skydynamic.maiprober.compose.setting.SettingItemGroup
-import io.github.skydynamic.maiprober.compose.setting.SettingSliderItem
-import io.github.skydynamic.maiprober.compose.setting.SettingSwitchItem
+import io.github.skydynamic.maiprober.compose.setting.*
 import io.github.skydynamic.maiprober.util.config.Config
 import io.github.skydynamic.maiprober.util.config.ConfigStorage
+import io.github.skydynamic.maiprober.util.score.MaimaiDan
 
 @Composable
 fun SettingCompose() {
@@ -32,6 +30,72 @@ fun SettingCompose() {
                 initialValue = config.settings.useCache,
                 onSettingChange = { newValue ->
                     config.settings.useCache = newValue
+                    Config.write()
+                }
+            )
+        }
+
+        SettingItemGroup(
+            title = "查分器Token设置",
+            modifier = Modifier.fillMaxSize().padding(top = 15.dp)
+        ) {
+            SettingTextFiledItem(
+                modifier = Modifier.padding(start = 15.dp, end = 15.dp),
+                text = "水鱼查分器Token",
+                subtext = "水鱼查分器Token, 用于获取水鱼个人信息 / 游玩记录",
+                initialValue = config.token.divingFish,
+                onSettingChange = { newValue ->
+                    config.token.divingFish = newValue
+                    Config.write()
+                }
+            )
+
+            SettingTextFiledItem(
+                modifier = Modifier.padding(start = 15.dp, end = 15.dp),
+                text = "LXNS Token",
+                subtext = "LXNS Token, 用于获取LXNS个人信息 / 游玩记录",
+                initialValue = config.token.lxns,
+                onSettingChange = { newValue ->
+                    config.token.lxns = newValue
+                    Config.write()
+                }
+            )
+        }
+
+        SettingItemGroup(
+            title = "个人信息设置",
+            modifier = Modifier.fillMaxSize().padding(top = 15.dp)
+        ) {
+            SettingTextFiledItem(
+                modifier = Modifier.padding(start = 15.dp, end = 15.dp),
+                text = "用户名",
+                subtext = "B50中显示在的昵称",
+                initialValue = config.personalInfo.name,
+                onSettingChange = { newValue ->
+                    config.personalInfo.name = newValue
+                    Config.write()
+                }
+            )
+
+            SettingTextFiledItem(
+                modifier = Modifier.padding(start = 15.dp, end = 15.dp),
+                text = "自定义称号",
+                subtext = "B50中显示在昵称下的称号(太长可能会被阶段)",
+                initialValue = config.personalInfo.maimaiTitle,
+                onSettingChange = { newValue ->
+                    config.personalInfo.maimaiTitle = newValue
+                    Config.write()
+                }
+            )
+
+            SettingDropdownMenuItem(
+                modifier = Modifier.padding(start = 15.dp, end = 15.dp),
+                text = "舞萌DX段位",
+                subtext = "B50中现实的段位",
+                initialValue = config.personalInfo.maimaiDan,
+                itemList = MaimaiDan.entries,
+                onSettingChange = { newValue ->
+                    config.personalInfo.maimaiDan = newValue
                     Config.write()
                 }
             )

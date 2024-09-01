@@ -10,6 +10,8 @@ object Config {
     lateinit var configStorage: ConfigStorage
     val settings
         get() = configStorage.settings
+    val personalInfo
+        get() = configStorage.personalInfo
     private val configPath = Path("./config.yaml")
     private val yaml = Yaml()
 

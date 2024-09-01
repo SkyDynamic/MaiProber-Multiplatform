@@ -40,20 +40,38 @@ object ResourceManager {
         val AP = getResource("maimai/pic/UI_MSS_MBase_Icon_AP.png")
         val APP = getResource("maimai/pic/UI_MSS_MBase_Icon_APp.png")
 
-        // Number
-        val ZERO = getResource("maimai/pic/UI_NUM_Drating_0.png")
-        val ONE = getResource("maimai/pic/UI_NUM_Drating_1.png")
-        val TWO = getResource("maimai/pic/UI_NUM_Drating_2.png")
-        val THREE = getResource("maimai/pic/UI_NUM_Drating_3.png")
-        val FOUR = getResource("maimai/pic/UI_NUM_Drating_4.png")
-        val FIVE = getResource("maimai/pic/UI_NUM_Drating_5.png")
-        val SIX = getResource("maimai/pic/UI_NUM_Drating_6.png")
-        val SEVEN = getResource("maimai/pic/UI_NUM_Drating_7.png")
-        val EIGHT = getResource("maimai/pic/UI_NUM_Drating_8.png")
-        val NINE = getResource("maimai/pic/UI_NUM_Drating_9.png")
-
         // Bests Background
         val BESTS_BACKGROUND = getResource("maimai/pic/UI_CMN_Shougou_Rainbow.png")
+
+        // Number
+        fun getNumberIconWihmNumber(number: Int) : Path {
+            if (number in 0..9) {
+                return getResource("maimai/pic/UI_NUM_Drating_$number.png")
+            } else {
+                throw Exception("Number must be in 0..9")
+            }
+        }
+
+        fun getDanIconWithIndex(index: Int) : Path {
+            return getResource("maimai/pic/dan/$index.png")
+        }
+
+        fun getDXRatingIconWithRating(score: Int) : Path {
+            val index = when (score) {
+                in 0..999 -> "01"
+                in 1000..1999 -> "02"
+                in 2000..3999 -> "03"
+                in 4000..6999 -> "04"
+                in 7000..9999 -> "05"
+                in 10000..11999 -> "06"
+                in 12000..12999 -> "07"
+                in 13000..13999 -> "08"
+                in 14000..14999 -> "09"
+                in 15000..16999 -> "10"
+                else -> "01"
+            }
+            return getResource("maimai/pic/UI_CMN_DXRating_S_$index.png")
+        }
     }
 
     @JvmStatic

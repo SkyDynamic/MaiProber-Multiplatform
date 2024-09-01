@@ -150,6 +150,7 @@ enum class MaimaiSpecialClearType(val sepcialClearName: String, val iconPath: Pa
     APP("app", ResourceManager.MaimaiResources.APP);
 }
 
+@Serializable
 enum class MaimaiSyncType(val syncName: String, val iconPath: Path) {
     @SerialName("") NULL("", ResourceManager.MaimaiResources.BLAND),
     SYNC("sync", ResourceManager.MaimaiResources.SYNC),
@@ -157,4 +158,67 @@ enum class MaimaiSyncType(val syncName: String, val iconPath: Path) {
     FSP("fsp", ResourceManager.MaimaiResources.FSP),
     FDX("fdx", ResourceManager.MaimaiResources.FDX),
     FDXP("fdxp", ResourceManager.MaimaiResources.FXDP);
+}
+
+@Serializable
+enum class MaimaiDan(val danName: String, val danIndex: Int) {
+    DAN0("初学者", 0),
+    DAN1("初段", 1),
+    DAN2("二段", 2),
+    DAN3("三段", 3),
+    DAN4("四段", 4),
+    DAN5("五段", 5),
+    DAN6("六段", 6),
+    DAN7("七段", 7),
+    DAN8("八段", 8),
+    DAN9("九段", 9),
+    DAN10("十段", 10),
+    DAN11("真传", 11),
+    DAN12("真初段", 12),
+    DAN13("真二段", 13),
+    DAN14("真三段", 14),
+    DAN15("真四段", 15),
+    DAN16("真五段", 16),
+    DAN17("真六段", 17),
+    DAN18("真七段", 18),
+    DAN19("真八段", 19),
+    DAN20("真九段", 20),
+    DAN21("真十段", 21),
+    DAN22("真皆传", 22),
+    DAN23("里皆传", 23);
+
+    override fun toString(): String {
+        return this.danName
+    }
+
+    companion object {
+        fun getDanByIndex(index: Int): MaimaiDan {
+            return when (index) {
+                0 -> DAN0
+                1 -> DAN1
+                2 -> DAN2
+                3 -> DAN3
+                4 -> DAN4
+                5 -> DAN5
+                6 -> DAN6
+                7 -> DAN7
+                8 -> DAN8
+                9 -> DAN9
+                10 -> DAN10
+                11 -> DAN11
+                12 -> DAN12
+                13 -> DAN13
+                14 -> DAN14
+                15 -> DAN15
+                16 -> DAN16
+                17 -> DAN17
+                18 -> DAN18
+                19 -> DAN19
+                20 -> DAN20
+                21 -> DAN21
+                22 -> DAN22
+                else -> DAN0
+            }
+        }
+    }
 }

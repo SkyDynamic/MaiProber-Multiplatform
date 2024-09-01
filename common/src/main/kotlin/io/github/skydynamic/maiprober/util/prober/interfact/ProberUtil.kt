@@ -7,6 +7,7 @@ interface ProberUtil {
     val updateFinishedSignal: MaiproberSignal<String>
 
     suspend fun validateProberAccount(username: String, password: String) : Boolean
+    suspend fun updateAccountInfo(username: String, password: String)
     suspend fun uploadMaimaiProberData(username: String, password: String, authUrl: String, isCache: Boolean)
     suspend fun uploadChunithmProberData(username: String, password: String, authUrl: String, isCache: Boolean)
 }
