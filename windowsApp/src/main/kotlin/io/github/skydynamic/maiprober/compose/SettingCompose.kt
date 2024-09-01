@@ -91,7 +91,7 @@ fun SettingCompose() {
             SettingDropdownMenuItem(
                 modifier = Modifier.padding(start = 15.dp, end = 15.dp),
                 text = "舞萌DX段位",
-                subtext = "B50中现实的段位",
+                subtext = "B50中显示的段位",
                 initialValue = config.personalInfo.maimaiDan,
                 itemList = MaimaiDan.entries,
                 onSettingChange = { newValue ->
