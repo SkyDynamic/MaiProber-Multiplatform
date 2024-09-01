@@ -187,7 +187,7 @@ fun <T> SettingDropdownMenuItem(
     itemList: List<T>,
     onSettingChange: (T) -> Unit
 ) {
-    val value by remember { mutableStateOf(initialValue) }
+    var value by remember { mutableStateOf(initialValue) }
     var isDropdownMenu by remember { mutableStateOf(false) }
 
     Row(
@@ -204,7 +204,9 @@ fun <T> SettingDropdownMenuItem(
                 modifier = Modifier.width(200.dp),
                 readOnly = true,
                 value = value.toString(),
-                onValueChange = { },
+                onValueChange = {
+
+                },
                 trailingIcon = {
                     IconButton(
                         onClick = {
@@ -236,6 +238,7 @@ fun <T> SettingDropdownMenuItem(
                         onClick = {
                             isDropdownMenu = false
                             onSettingChange(item)
+                            value = item
                         },
                     )
                 }

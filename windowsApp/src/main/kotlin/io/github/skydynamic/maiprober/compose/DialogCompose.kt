@@ -164,7 +164,7 @@ object DialogCompose {
                         .onPointerEvent(PointerEventType.Scroll) { event ->
                             event.changes.forEach { change ->
                                 val zoomFactor = 1.1f
-                                if (change.scrollDelta.y < 0) {
+                                if (change.scrollDelta.y > 0) {
                                     scale /= zoomFactor
                                 } else {
                                     scale *= zoomFactor
