@@ -2,7 +2,6 @@ package io.github.skydynamic.maiprober.compose.setting
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
@@ -14,12 +13,15 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import io.github.skydynamic.maiprober.compose.DialogCompose
 import io.github.skydynamic.maiprober.compose.colorPickerDialog
 import io.github.skydynamic.maiprober.util.asIcon
-import io.github.skydynamic.maiprober.util.score.MaimaiDan
+import io.github.skydynamic.maiprober.util.downloadWithRetry
 import io.github.skydynamic.windowsapp.generated.resources.Res
 import io.github.skydynamic.windowsapp.generated.resources.color_palette_24px
-import java.util.Objects
+import kotlinx.coroutines.runBlocking
+import java.nio.file.Path
+import kotlin.io.path.notExists
 
 @Composable
 fun SettingSliderItem(
@@ -204,9 +206,7 @@ fun <T> SettingDropdownMenuItem(
                 modifier = Modifier.width(200.dp),
                 readOnly = true,
                 value = value.toString(),
-                onValueChange = {
-
-                },
+                onValueChange = { },
                 trailingIcon = {
                     IconButton(
                         onClick = {
@@ -243,6 +243,48 @@ fun <T> SettingDropdownMenuItem(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun SettingImageListChooseItem(
+    modifier: Modifier = Modifier,
+    text: String,
+    subtext: String,
+    showImageNumOneLine: Int,
+    initialValue: Path,
+    imagePathList: List<Path>,
+    onSettingChange: (Path) -> Unit
+) {
+    var openImageChooseDialog by remember { mutableStateOf(false) }
+
+    when {
+        openImageChooseDialog -> DialogCompose.imageListChooseDialog(
+            "图片选择",
+            showImageNumOneLine,
+            imagePathList,
+            initialValue,
+            onCancel = { openImageChooseDialog = false },
+            onRequest = { onSettingChange(it) }
+        )
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier.fillMaxWidth().height(80.dp)
+    ) {
+        SettingTextItem(text = text, subtext = subtext)
+
+        Spacer(Modifier.weight(1f))
+
+        Button(
+            onClick = {
+                openImageChooseDialog = true
+            }
+        ) {
+            Text("选择")
         }
     }
 }

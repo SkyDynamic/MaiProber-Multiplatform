@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -21,7 +22,7 @@ fun colorPickerDialog(
 
     val hexColor = remember { mutableStateOf(initialColor) }
 
-    val colorPreview = remember { mutableStateOf(androidx.compose.ui.graphics.Color(red, green, blue)) }
+    val colorPreview = remember { mutableStateOf(Color(red, green, blue)) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -79,7 +80,7 @@ fun colorPickerDialog(
         val hexB = "%02X".format(b)
 
         hexColor.value = "#$hexR$hexG$hexB"
-        colorPreview.value = androidx.compose.ui.graphics.Color(r, g, b)
+        colorPreview.value = Color(r, g, b)
     }
 }
 
@@ -115,12 +116,14 @@ fun SliderRow(
     }
 }
 
-data class Color(val r: Int, val g: Int, val b: Int, val a: Int = 1)
+object ColorUtil {
+    data class Color(val r: Int, val g: Int, val b: Int, val a: Int = 1)
+}
 
-fun hexToRgb(hex: String): Color {
+fun hexToRgb(hex: String): ColorUtil.Color {
     return when (hex.length) {
         7 -> {
-            Color(
+            ColorUtil.Color(
                 Integer.valueOf(hex.substring(1, 3), 16),
                 Integer.valueOf(hex.substring(3, 5), 16),
                 Integer.valueOf(hex.substring(5), 16)
@@ -128,7 +131,7 @@ fun hexToRgb(hex: String): Color {
         }
 
         9 -> {
-            Color(
+            ColorUtil.Color(
                 Integer.valueOf(hex.substring(1, 3), 16),
                 Integer.valueOf(hex.substring(3, 5), 16),
                 Integer.valueOf(hex.substring(5, 7), 16),
@@ -137,7 +140,7 @@ fun hexToRgb(hex: String): Color {
         }
 
         else -> {
-            Color(0, 0, 0, 1)
+            ColorUtil.Color(0, 0, 0, 1)
         }
     }
 }

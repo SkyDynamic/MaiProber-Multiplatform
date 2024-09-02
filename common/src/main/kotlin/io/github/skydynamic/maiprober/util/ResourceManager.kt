@@ -4,7 +4,7 @@ import org.jetbrains.skia.Typeface
 import org.jetbrains.skia.makeFromFile
 import org.jetbrains.skia.paragraph.TypefaceFontProvider
 import java.nio.file.Path
-import kotlin.io.path.toPath
+import kotlin.io.path.*
 
 object ResourceManager {
     object MaimaiResources {
@@ -58,6 +58,7 @@ object ResourceManager {
         val BESTS_BACKGROUND = getResource("maimai/pic/UI_CMN_Shougou_Rainbow.png")
 
         // Number
+        @JvmStatic
         fun getNumberIconWihmNumber(number: Int) : Path {
             if (number in 0..9) {
                 return getResource("maimai/pic/UI_NUM_Drating_$number.png")
@@ -67,11 +68,13 @@ object ResourceManager {
         }
 
         // Dan icon
+        @JvmStatic
         fun getDanIconWithIndex(index: Int) : Path {
             return getResource("maimai/pic/dan/$index.png")
         }
 
         // Dx Rating icon
+        @JvmStatic
         fun getDXRatingIconWithRating(score: Int) : Path {
             val index = when (score) {
                 in 0..999 -> "01"
@@ -97,5 +100,35 @@ object ResourceManager {
             return res
         }
         throw Exception("Resource not found: $path")
+    }
+
+    /**
+    * 检查是否需要下载资源
+    *
+    * @param resourceNum: 资源总数
+    * @param offset: 是否完整偏移 (default 0)
+    * @param checkPath: 检查路径
+    * @param checkFileType: 检查文件类型
+    * @return Pair<Boolean, Int>: Boolean: 是否完整, Int: 已下载文件数量
+     */
+    @JvmStatic
+    fun getDoNotDownloadResourceNum(
+        resourceNum: Int, offset: Int = 0,
+        checkPath: Path, checkFileType: String
+    ): Pair<Boolean, Int> {
+        if (checkPath.notExists()) return Pair(false, 0)
+        val fileNum = checkPath.listDirectoryEntries()
+            .filter { !it.isDirectory() }
+            .filter { it.name.endsWith(checkFileType) }
+            .size
+        return Pair((resourceNum - offset - fileNum) <= 0, fileNum)
+    }
+
+    @JvmStatic
+    fun getResourcePathList(path: Path, fileType: String) : List<Path> {
+        return if (path.exists()) path.listDirectoryEntries()
+            .filter { !it.isDirectory() }
+            .filter { it.name.endsWith(fileType) }
+        else emptyList()
     }
 }

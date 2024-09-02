@@ -2,9 +2,14 @@ package io.github.skydynamic.maiprober.compose
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,6 +28,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.graphics.Color
+import coil3.compose.AsyncImage
+import coil3.compose.rememberAsyncImagePainter
+import java.nio.file.Path
 import kotlin.math.absoluteValue
 
 object DialogCompose {
@@ -175,6 +187,78 @@ object DialogCompose {
                             }
                         }
                 )
+            }
+        }
+    }
+
+    @Composable
+    fun imageListChooseDialog(
+        title: String,
+        showImageNumOneLine: Int,
+        imagePathList: List<Path>,
+        initValue: Path,
+        onRequest: (Path) -> Unit,
+        onCancel: () -> Unit,
+    ) {
+        var selectedImageIndex by remember { mutableStateOf(imagePathList.indexOf(initValue)) }
+
+        Dialog(
+            onDismissRequest = { onCancel() },
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(10.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Button(
+                            onClick = {
+                                if (selectedImageIndex != -1) onRequest(imagePathList[selectedImageIndex])
+                                onCancel()
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("确认")
+                        }
+
+                        Button(
+                            onClick = { onCancel() },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("取消")
+                        }
+                    }
+
+                    LazyVerticalGrid(
+                        modifier = Modifier.fillMaxWidth(),
+                        columns = GridCells.Fixed(showImageNumOneLine),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        items(
+                            imagePathList.size
+                        ) {
+                            val file = imagePathList[it].toFile()
+                            val isChoose = imagePathList[selectedImageIndex] == imagePathList[it]
+                            AsyncImage(
+                                model = file,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .clickable {
+                                        selectedImageIndex = it
+                                    }.border(
+                                        width = if (isChoose) 5.dp else 0.dp,
+                                        color = if (isChoose) Color.Red else Color.Transparent
+                                    )
+                            )
+                        }
+                    }
+                }
             }
         }
     }

@@ -6,8 +6,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.skydynamic.maiprober.compose.setting.*
+import io.github.skydynamic.maiprober.util.ResourceManager.getResourcePathList
 import io.github.skydynamic.maiprober.util.config.Config
 import io.github.skydynamic.maiprober.util.config.ConfigStorage
+import io.github.skydynamic.maiprober.util.iconSavePath
+import io.github.skydynamic.maiprober.util.plateSavePath
 import io.github.skydynamic.maiprober.util.score.MaimaiDan
 
 @Composable
@@ -66,6 +69,32 @@ fun SettingCompose() {
             title = "个人信息设置",
             modifier = Modifier.fillMaxSize().padding(top = 15.dp)
         ) {
+            SettingImageListChooseItem(
+                modifier = Modifier.padding(start = 15.dp, end = 15.dp),
+                text = "头像",
+                subtext = "B50中显示的头像(需要先预下载, 否则点击会崩溃)",
+                showImageNumOneLine = 6,
+                initialValue = iconSavePath.resolve("${config.personalInfo.maimaiIcon}.png"),
+                imagePathList = getResourcePathList(iconSavePath, "png"),
+                onSettingChange = { newValue ->
+                    config.personalInfo.maimaiIcon = newValue.toFile().name.split(".")[0].toInt()
+                    Config.write()
+                }
+            )
+
+            SettingImageListChooseItem(
+                modifier = Modifier.padding(start = 15.dp, end = 15.dp),
+                text = "姓名框",
+                subtext = "B50中显示的姓名框 (需要先预下载, 否则点击会崩溃)",
+                showImageNumOneLine = 2,
+                initialValue = plateSavePath.resolve("${config.personalInfo.maimaiPlate}.png"),
+                imagePathList = getResourcePathList(plateSavePath, "png"),
+                onSettingChange = { newValue ->
+                    config.personalInfo.maimaiPlate = newValue.toFile().name.split(".")[0].toInt()
+                    Config.write()
+                }
+            )
+
             SettingTextFiledItem(
                 modifier = Modifier.padding(start = 15.dp, end = 15.dp),
                 text = "用户名",

@@ -20,6 +20,7 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(compose.animation)
     implementation(compose.material3)
+    implementation(compose.foundation)
     implementation(libs.androidx.lifecycle.viewmodel.desktop)
 
     implementation(libs.coil.core)
