@@ -77,23 +77,45 @@ fun calcScore(score: String, songLevel: Float): Int {
 }
 
 fun generatePlayerInfo(rating: Int): Image {
-    return return View(
+    return View(
         modifier = Modifier(720.dp, 116.dp)
     ) {
+        val plateImageFile = plateSavePath.resolve("${config.personalInfo.maimaiPlate}.png").toFile()
+        val iconImageFile = iconSavePath.resolve("${config.personalInfo.maimaiIcon}.png").toFile()
+
+        if (!plateImageFile.exists()) {
+            logger.info("未找到设置的姓名框, 正在尝试下载...")
+            runBlocking {
+                if (!plateSavePath.exists()) plateSavePath.toFile().mkdirs()
+                downloadWithRetry(
+                    url = "$plateResourceUrl/${config.personalInfo.maimaiPlate}.png",
+                    savePath = plateImageFile.toPath()
+                )
+            }
+        }
+        if (!iconImageFile.exists()) {
+            logger.info("未找到设置的玩家头像, 正在尝试下载...")
+            runBlocking {
+                if (!iconSavePath.exists()) iconSavePath.toFile().mkdirs()
+                downloadWithRetry(
+                    url = "$iconResourceUrl/${config.personalInfo.maimaiIcon}.png",
+                    savePath = iconImageFile.toPath()
+                )
+            }
+        }
+
+        val plateImage = Image.makeFromEncoded(plateImageFile.readBytes())
+        val iconImage = Image.makeFromEncoded(iconImageFile.readBytes())
         Box(modifier = Modifier().fillMaxSize()) {
             Image(
-                image = Image.makeFromEncoded(
-                    plateSavePath.resolve("${config.personalInfo.maimaiPlate}.png").toFile().readBytes()
-                ),
+                image = plateImage,
                 modifier = Modifier().width(720.dp)
             )
             Row(
                 modifier = Modifier().fillMaxSize().padding(top = 5.dp, left = 5.dp)
             ) {
                 Image(
-                    image = Image.makeFromEncoded(
-                        iconSavePath.resolve("${config.personalInfo.maimaiIcon}.png").toFile().readBytes()
-                    ),
+                    image = iconImage,
                     modifier = Modifier(106.dp, 106.dp)
                 )
 
@@ -138,11 +160,17 @@ fun generatePlayerInfo(rating: Int): Image {
                             .border(8.dp, 8.dp, Color.TRANSPARENT)
                             .background(Color.WHITE)
                     ) {
-                        Text(
-                            text = config.personalInfo.name,
-                            fontSize = 36.dp,
-                            modifier = Modifier().fillMaxWidth(),
-                        )
+                        Box(
+                            modifier = Modifier().width(width - 90.dp),
+                            alignment = LayoutAlignment.CENTER_LEFT
+                        ) {
+                            Text(
+                                text = config.personalInfo.name,
+                                fontSize = 28.dp,
+                                fontFamily = ResourceManager.MaimaiResources.Fonts.ADOBE_SIMHEI.getFamilyName(0),
+                                alignment = LayoutAlignment.CENTER_LEFT
+                            )
+                        }
                         Box(
                             modifier = Modifier().padding(right = 5.dp),
                             alignment = LayoutAlignment.CENTER_RIGHT
@@ -302,8 +330,8 @@ fun generateSongScore(data: MaimaiMusicDetail): Image {
 
                             Box(
                                 modifier = Modifier(
-                                    clearTypeIconWidget.toInt().dp + 3.dp,
-                                    clearTypeIconHeight.toInt().dp + 2.dp
+                                    clearTypeIconWidget.toInt().dp + 5.dp,
+                                    clearTypeIconHeight.toInt().dp + 5.dp
                                 ).padding(left = 5.dp),
                                 alignment = LayoutAlignment.CENTER
                             ) {

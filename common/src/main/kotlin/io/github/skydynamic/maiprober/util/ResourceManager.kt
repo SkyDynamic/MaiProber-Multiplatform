@@ -1,10 +1,24 @@
 package io.github.skydynamic.maiprober.util
 
+import org.jetbrains.skia.Typeface
+import org.jetbrains.skia.makeFromFile
+import org.jetbrains.skia.paragraph.TypefaceFontProvider
 import java.nio.file.Path
 import kotlin.io.path.toPath
 
 object ResourceManager {
     object MaimaiResources {
+        object Fonts {
+            private val fontProvider = TypefaceFontProvider()
+
+            val ADOBE_SIMHEI = fontProvider.registerTypeface(
+                Typeface.makeFromFile(getResource("maimai/fonts/adobe_simhei.otf").toString(), 0)
+            )
+
+            val MSYH = fontProvider.registerTypeface(
+                Typeface.makeFromFile(getResource("maimai/fonts/msyh.ttc").toString(), 0)
+            )
+        }
         // Rank
         val RANK_D = getResource("maimai/pic/UI_GAM_Rank_D.png")
         val RANK_C = getResource("maimai/pic/UI_GAM_Rank_C.png")
@@ -52,10 +66,12 @@ object ResourceManager {
             }
         }
 
+        // Dan icon
         fun getDanIconWithIndex(index: Int) : Path {
             return getResource("maimai/pic/dan/$index.png")
         }
 
+        // Dx Rating icon
         fun getDXRatingIconWithRating(score: Int) : Path {
             val index = when (score) {
                 in 0..999 -> "01"
