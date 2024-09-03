@@ -5,62 +5,26 @@ import io.github.skydynamic.maiprober.util.ParseScorePageUtil
 import io.github.skydynamic.maiprober.util.config.Config
 import io.github.skydynamic.maiprober.util.config.ProberUserInfo
 import io.github.skydynamic.maiprober.util.prober.LoginData
+import io.github.skydynamic.maiprober.util.prober.client
+import io.github.skydynamic.maiprober.util.prober.delayRandomTime
 import io.github.skydynamic.maiprober.util.prober.interfact.ProberUtil
-import io.github.skydynamic.maiprober.util.score.ChunithmMusicDetailList
-import io.github.skydynamic.maiprober.util.score.MaimaiDan
-import io.github.skydynamic.maiprober.util.score.MaimaiDifficulty
-import io.github.skydynamic.maiprober.util.score.MaimaiMusicDetailList
+import io.github.skydynamic.maiprober.util.prober.json
+import io.github.skydynamic.maiprober.util.score.*
 import io.github.skydynamic.maiprober.util.singal.MaiproberSignal
-import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import kotlin.random.Random
-
-suspend fun delayRandomTime(diff: Int) {
-    val duration = 500L * (diff + 1) + 500L * 2 * Random.nextDouble()
-    withContext(Dispatchers.IO) {
-        delay(duration.toLong())
-    }
-}
-
-val json = Json {
-    ignoreUnknownKeys = true
-    encodeDefaults = true
-}
-
-val client = HttpClient(CIO) {
-    install(ContentNegotiation) {
-        json()
-    }
-    install(HttpTimeout) {
-        requestTimeoutMillis = 30000
-        connectTimeoutMillis = 30000
-    }
-    install(HttpCookies) {
-        storage = AcceptAllCookiesStorage()
-    }
-}
 
 class DivingFishProberUtil : ProberUtil {
     private val loginUrl = "https://www.diving-fish.com/api/maimaidxprober/login"
 
-    private val logger: Logger = LoggerFactory.getLogger("MaimaiDX-Prober-Kotlin")
+    private val logger: Logger = LoggerFactory.getLogger("DivingFish")
     private lateinit var jwtToken: Cookie
 
     @Serializable
@@ -79,6 +43,25 @@ class DivingFishProberUtil : ProberUtil {
         val plate: String,
         @SerialName("user_general_data") val userGeneralData: String? = null,
         @SerialName("import_token") val importToken: String,
+    )
+
+    @Serializable
+    data class MaimaiRecordsData(
+        @SerialName("additional_rating") val additionalRating: Int,
+        val nickname: String,
+        val plate: String,
+        val rating: Int,
+        val records: List<MaimaiRecordData>,
+        val username: String
+    )
+
+    @Serializable
+    data class MaimaiRecordData(
+        val achievements: Float, val ds: Float, val dxScore: Int,
+        val fc: String, val fs: String, val level: String,
+        @SerialName("level_index") val levelIndex: Int, @SerialName("level_label") val levelLabel: String,
+        val ra: Int, val rate: String, @SerialName("song_id") val songId: Int, val title: String,
+        val type: String,
     )
 
     private val updateStartedSignalBuilder = MaiproberSignal<String>()
@@ -260,6 +243,56 @@ class DivingFishProberUtil : ProberUtil {
         }
         logger.info("Chunithm 成绩上传到 Diving-Fish 查分器数据库完毕")
         updateFinishedSignal.emit("Maimai 成绩上传到 Diving-Fish 查分器数据库完毕")
+    }
+
+    private fun processMaimaiSongData(music: MaimaiRecordData): MaimaiMusicDetail {
+        val version = MAIMAI_SONG_INFO.find { it.title == music.title }?.version ?: -1
+        return MaimaiMusicDetail(
+            music.title, music.ds, music.achievements.toString() + "%",
+            music.dxScore.toString(), music.ra, version,
+            MaimaiMusicKind.getMusicKind(music.type),
+            MaimaiDifficulty.getDifficultyWithIndex(music.levelIndex),
+            MaimaiClearType.getClearTypeByScore(music.achievements),
+            MaimaiSyncType.getSyncType(music.fs), MaimaiSpecialClearType.getSpecialClearType(music.fc)
+        )
+    }
+
+    override suspend fun getMaimaiSongScoreData(
+        username: String,
+        password: String,
+        isCache: Boolean
+    ): MaimaiMusicDetailList {
+        if (!validateProberAccount(username, password)) {
+            throw RuntimeException("Maimai Prober 账号验证失败")
+        }
+        val musicDetailList = MaimaiMusicDetailList(System.currentTimeMillis())
+        val data: HttpResponse = client.get("https://www.diving-fish.com/api/maimaidxprober/player/records")
+        val resp: MaimaiRecordsData = data.body()
+        for (music in resp.records) {
+            musicDetailList.songs.add(processMaimaiSongData(music))
+        }
+        if (isCache) musicDetailList.save()
+        return musicDetailList
+    }
+
+    override suspend fun getMaimaiSongScoreData(importToken: String, isCache: Boolean): MaimaiMusicDetailList {
+        val data: HttpResponse = client.get("https://www.diving-fish.com/api/maimaidxprober/player/records") {
+            headers {
+                append("Import-Token", importToken)
+            }
+        }
+
+        if (data.status != HttpStatusCode.OK) {
+            throw RuntimeException("Import-Token 无效")
+        }
+
+        val musicDetailList = MaimaiMusicDetailList(System.currentTimeMillis())
+        val resp: MaimaiRecordsData = data.body()
+        for (music in resp.records) {
+            musicDetailList.songs.add(processMaimaiSongData(music))
+        }
+        if (isCache) musicDetailList.save()
+        return musicDetailList
     }
 
     companion object {

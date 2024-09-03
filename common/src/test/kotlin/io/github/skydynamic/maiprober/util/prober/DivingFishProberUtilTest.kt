@@ -1,5 +1,6 @@
 package io.github.skydynamic.maiprober.util.prober
 
+import io.github.skydynamic.maiprober.util.prober.divingfish.DivingFishProberUtil.MaimaiRecordsData
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -12,7 +13,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
-import java.io.File
 
 class DivingFishProberUtilTest {
     private val client = HttpClient(CIO) {
@@ -57,5 +57,21 @@ class DivingFishProberUtilTest {
         }
         val respData: String = resp.body()
         println(respData)
+    }
+
+    @Test
+    fun getData() = runBlocking {
+        val data: HttpResponse = client.get("https://www.diving-fish.com/api/maimaidxprober/player/records") {
+            headers {
+                append("Import-Token", "3ba41cc21ba1c3ebe3574aa2c733e34430ca4ee0f3868b6ab26c04064710e1d6f1a8edd30531414fbd109d962a89f057ef86ccdb392440b7221abdd0ba50c630")
+            }
+        }
+
+        if (data.status != HttpStatusCode.OK) {
+            throw RuntimeException("Import-Token 无效")
+        }
+
+        val resp: MaimaiRecordsData = data.body()
+        print(resp.records)
     }
 }

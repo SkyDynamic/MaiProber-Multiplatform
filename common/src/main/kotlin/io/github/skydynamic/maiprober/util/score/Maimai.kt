@@ -93,9 +93,25 @@ data class MaimaiMusicDetailList(
 }
 
 @Serializable
-enum class MaimaiMusicKind {
-    DELUXE,
-    STANDARD
+enum class MaimaiMusicKind(val musicKindName: String) {
+    DELUXE("dx"),
+    STANDARD("sd"),
+    UTAGE("utage");
+
+    companion object {
+        @JvmStatic
+        fun getMusicKind(musicKindName: String): MaimaiMusicKind {
+            for (kind in entries) {
+                if (
+                    kind.musicKindName == musicKindName.lowercase()
+                    || kind.name.lowercase() == musicKindName.lowercase()
+                ) {
+                    return kind
+                }
+            }
+            throw IllegalArgumentException("No such music kind")
+        }
+    }
 }
 
 @Serializable
@@ -105,6 +121,18 @@ enum class MaimaiDifficulty(val diffName: String, val diffIndex: Int) {
     EXPERT("Expert", 2),
     MASTER("Master", 3),
     REMASTER("Re:Master", 4);
+
+    companion object {
+        @JvmStatic
+        fun getDifficultyWithIndex(diffIndex: Int): MaimaiDifficulty {
+            for (difficulty in entries) {
+                if (difficulty.diffIndex == diffIndex) {
+                    return difficulty
+                }
+            }
+            throw IllegalArgumentException("No such difficulty")
+        }
+    }
 }
 
 @Serializable
@@ -148,6 +176,18 @@ enum class MaimaiSpecialClearType(val sepcialClearName: String, val iconPath: Pa
     FCP("fcp", ResourceManager.MaimaiResources.FCP),
     AP("ap", ResourceManager.MaimaiResources.AP),
     APP("app", ResourceManager.MaimaiResources.APP);
+
+    companion object {
+        @JvmStatic
+        fun getSpecialClearType(specialClearName: String): MaimaiSpecialClearType {
+            for (specialClearType in entries) {
+                if (specialClearType.sepcialClearName == specialClearName.lowercase()) {
+                    return specialClearType
+                }
+            }
+            throw IllegalArgumentException("No such special clear type")
+        }
+    }
 }
 
 @Serializable
@@ -156,8 +196,20 @@ enum class MaimaiSyncType(val syncName: String, val iconPath: Path) {
     SYNC("sync", ResourceManager.MaimaiResources.SYNC),
     FS("fs", ResourceManager.MaimaiResources.FS),
     FSP("fsp", ResourceManager.MaimaiResources.FSP),
-    FDX("fdx", ResourceManager.MaimaiResources.FDX),
-    FDXP("fdxp", ResourceManager.MaimaiResources.FXDP);
+    FDX("fsd", ResourceManager.MaimaiResources.FDX),
+    FDXP("fsdp", ResourceManager.MaimaiResources.FXDP);
+
+    companion object {
+        @JvmStatic
+        fun getSyncType(syncName: String): MaimaiSyncType {
+            for (syncType in entries) {
+                if (syncType.syncName == syncName.lowercase()) {
+                    return syncType
+                }
+            }
+            return NULL
+        }
+    }
 }
 
 @Serializable

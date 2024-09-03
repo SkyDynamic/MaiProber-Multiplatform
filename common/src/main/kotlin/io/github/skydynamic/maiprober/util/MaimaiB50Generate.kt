@@ -18,6 +18,7 @@ import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.exists
 import kotlin.io.path.readBytes
+import kotlin.math.ceil
 
 const val latestMaimaiVersion = 24000
 
@@ -253,6 +254,7 @@ fun generateSongScore(data: MaimaiMusicDetail): Image {
                 val kindIcon = when(data.uepInfo) {
                     DELUXE -> ResourceManager.MaimaiResources.DELUXE
                     STANDARD -> ResourceManager.MaimaiResources.STANDARD
+                    UTAGE -> Path("")
                 }
                 Box(
                     modifier = Modifier(117.dp, 32.dp).padding(top = 15.dp),
@@ -329,15 +331,15 @@ fun generateSongScore(data: MaimaiMusicDetail): Image {
                             val clearTypeIconHeight = clearTypeIconWidget / clearTypeIconRatio
 
                             Box(
-                                modifier = Modifier(
-                                    clearTypeIconWidget.toInt().dp + 5.dp,
-                                    clearTypeIconHeight.toInt().dp + 5.dp
-                                ).padding(left = 5.dp),
+                                modifier = Modifier().padding(left = 5.dp),
                                 alignment = LayoutAlignment.CENTER
                             ) {
                                 Image(
                                     image = clearTypeIcon,
-                                    modifier = Modifier().fillMaxSize()
+                                    modifier = Modifier(
+                                        ceil(clearTypeIconWidget).toInt().dp,
+                                        ceil(clearTypeIconHeight).toInt().dp
+                                    )
                                 )
                             }
 

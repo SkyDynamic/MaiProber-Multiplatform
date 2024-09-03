@@ -12,6 +12,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import coil3.compose.rememberAsyncImagePainter
 import io.github.skydynamic.maiprober.util.*
+import io.github.skydynamic.maiprober.util.config.Config
+import io.github.skydynamic.maiprober.util.prober.ProberPlatform
 import io.github.skydynamic.maiprober.util.score.MaimaiMusicDetailList
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -24,16 +26,28 @@ enum class MaimaiB50Platform(val id: String, val index: Int) {
     Lxns("落雪查分器", 2)
 }
 
-fun generateB50(platform: MaimaiB50Platform, timestamp: Long) {
+suspend fun generateB50(platform: MaimaiB50Platform, timestamp: Long) {
     when (platform) {
         MaimaiB50Platform.LocalCache -> {
             generateB50(MaimaiMusicDetailList.getCache(), timestamp)
         }
 
         MaimaiB50Platform.DivingFish -> {
+            generateB50(
+                ProberPlatform.DIVING_FISH.factory.getMaimaiSongScoreData(
+                    Config.configStorage.token.divingFish, Config.settings.useCache
+                ),
+                timestamp
+            )
         }
 
         MaimaiB50Platform.Lxns -> {
+            generateB50(
+                ProberPlatform.LXNS.factory.getMaimaiSongScoreData(
+                    Config.configStorage.token.lxns, Config.settings.useCache
+                ),
+                timestamp
+            )
         }
     }
 }

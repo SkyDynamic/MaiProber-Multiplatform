@@ -1,6 +1,7 @@
 package io.github.skydynamic.maiprober.util.prober.divingfish
 
 import io.github.skydynamic.maiprober.util.config.Config.configStorage
+import io.github.skydynamic.maiprober.util.prober.json
 import kotlinx.coroutines.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString

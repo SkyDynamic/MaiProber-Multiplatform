@@ -72,7 +72,7 @@ fun SettingCompose() {
             SettingImageListChooseItem(
                 modifier = Modifier.padding(start = 15.dp, end = 15.dp),
                 text = "头像",
-                subtext = "B50中显示的头像(需要先预下载, 否则点击会崩溃)",
+                subtext = "B50中显示的头像(需要先预下载, 否则点击可能会导致会崩溃)",
                 showImageNumOneLine = 6,
                 initialValue = iconSavePath.resolve("${config.personalInfo.maimaiIcon}.png"),
                 imagePathList = getResourcePathList(iconSavePath, "png"),
@@ -85,7 +85,7 @@ fun SettingCompose() {
             SettingImageListChooseItem(
                 modifier = Modifier.padding(start = 15.dp, end = 15.dp),
                 text = "姓名框",
-                subtext = "B50中显示的姓名框 (需要先预下载, 否则点击会崩溃)",
+                subtext = "B50中显示的姓名框 (需要先预下载, 否则点击可能会导致会崩溃)",
                 showImageNumOneLine = 2,
                 initialValue = plateSavePath.resolve("${config.personalInfo.maimaiPlate}.png"),
                 imagePathList = getResourcePathList(plateSavePath, "png"),
@@ -109,7 +109,7 @@ fun SettingCompose() {
             SettingTextFiledItem(
                 modifier = Modifier.padding(start = 15.dp, end = 15.dp),
                 text = "自定义称号",
-                subtext = "B50中显示在昵称下的称号(太长可能会被阶段)",
+                subtext = "B50中显示在昵称下的称号(太长可能会被截断)",
                 initialValue = config.personalInfo.maimaiTitle,
                 onSettingChange = { newValue ->
                     config.personalInfo.maimaiTitle = newValue
