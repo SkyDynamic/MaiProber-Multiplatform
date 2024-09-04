@@ -246,10 +246,18 @@ class DivingFishProberUtil : ProberUtil {
     }
 
     private fun processMaimaiSongData(music: MaimaiRecordData): MaimaiMusicDetail {
-        val version = MAIMAI_SONG_INFO.find { it.title == music.title }?.version ?: -1
+        val songInfo = MAIMAI_SONG_INFO.find { it.title == music.title }
+        val version = songInfo?.version ?: -1
+        var notes = 0
+        if (music.type == "dx") {
+            notes = songInfo!!.dxNotes[music.levelIndex]
+        } else if (music.type == "standard") {
+            notes = songInfo!!.standardNotes[music.levelIndex]
+        }
         return MaimaiMusicDetail(
-            music.title, music.ds, music.achievements.toString() + "%",
-            music.dxScore.toString(), music.ra, version,
+            music.title, music.ds, "${music.achievements}%",
+            "${music.dxScore} / ${notes * 3}",
+            music.ra, version,
             MaimaiMusicKind.getMusicKind(music.type),
             MaimaiDifficulty.getDifficultyWithIndex(music.levelIndex),
             MaimaiClearType.getClearTypeByScore(music.achievements),

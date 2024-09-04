@@ -39,15 +39,19 @@ class LxnsProberUtil : ProberUtil {
     private fun processMaimaiSongData(music: MaimaiRecordData): MaimaiMusicDetail {
         val songInfo = MAIMAI_SONG_INFO.find { it.title == music.songName }
         val version = songInfo?.version ?: -1
+        var notes = 0
         var level = 0f
         if (music.type == "dx") {
-            level = songInfo!!.dxLevel[music.levelIndex]
+            notes = songInfo!!.dxNotes[music.levelIndex]
+            level = songInfo.dxLevel[music.levelIndex]
         } else if (music.type == "standard") {
-            level = songInfo!!.standardLevel[music.levelIndex]
+            notes = songInfo!!.standardNotes[music.levelIndex]
+            level = songInfo.standardLevel[music.levelIndex]
         }
         return MaimaiMusicDetail(
-            music.songName, level, music.achievements.toString() + "%",
-            music.dxScore.toString(), floor(music.dxRating).toInt(), version,
+            music.songName, level, "${music.achievements}%",
+            "${music.dxScore} / ${notes * 3}",
+            floor(music.dxRating).toInt(), version,
             MaimaiMusicKind.getMusicKind(music.type),
             MaimaiDifficulty.getDifficultyWithIndex(music.levelIndex),
             MaimaiClearType.getClearTypeByScore(music.achievements),
@@ -61,26 +65,18 @@ class LxnsProberUtil : ProberUtil {
         throw RuntimeException("Lxns do not use username and password to login, please use lxns token")
     }
 
-    override suspend fun uploadMaimaiProberData(
-        username: String, password: String,
-        authUrl: String, isCache: Boolean
-    ) {
+    override suspend fun uploadMaimaiProberData(username: String, password: String,
+                                                authUrl: String, isCache: Boolean) {
         throw RuntimeException("Lxns do not use username and password to login, please use lxns token")
     }
 
-    override suspend fun uploadChunithmProberData(
-        username: String,
-        password: String,
-        authUrl: String,
-        isCache: Boolean
-    ) {
+    override suspend fun uploadChunithmProberData(username: String, password: String,
+                                                  authUrl: String, isCache: Boolean) {
         throw RuntimeException("Lxns do not use username and password to login, please use lxns token")
     }
 
     override suspend fun getMaimaiSongScoreData(
-        username: String,
-        password: String,
-        isCache: Boolean
+        username: String, password: String, isCache: Boolean
     ): MaimaiMusicDetailList {
         throw RuntimeException("Lxns do not use username and password to login, please use lxns token")
     }

@@ -18,21 +18,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import io.github.skydynamic.maiprober.compose.*
-import io.github.skydynamic.maiprober.compose.DialogCompose.confirmDialog
 import io.github.skydynamic.maiprober.util.*
 import io.github.skydynamic.maiprober.util.config.Config
-import io.github.skydynamic.maiprober.util.singal.MaiproberSignal
 import io.github.skydynamic.windowsapp.generated.resources.*
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.skiko.hostOs
 import java.awt.Dimension
-import kotlin.io.path.exists
 
 private var valueUpdater: (String) -> Unit = { }
 
-@OptIn(DelicateCoroutinesApi::class)
 @Preview
 @Composable
 fun mainComposable() {
@@ -212,7 +206,7 @@ fun mainComposable() {
                 ) {
                     Crossfade(
                         targetState = pageIndex,
-                        animationSpec = tween(durationMillis = 300)
+                        animationSpec = tween(durationMillis = 500)
                     ) {
                         pages[it]()
                     }

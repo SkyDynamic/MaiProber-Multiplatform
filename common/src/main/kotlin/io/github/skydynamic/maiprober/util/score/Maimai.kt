@@ -54,6 +54,8 @@ object MaimaiInterfaceResourcePath {
 @Serializable
 data class MaimaiSongInfo(
     val id: Int, val title: String, val version: Int,
+    @SerialName("dx_difficulties_notes") val dxNotes: List<Int>,
+    @SerialName("standard_difficulties_notes") val standardNotes: List<Int>,
     @SerialName("dx_levels") val dxLevel: List<Float>,
     @SerialName("standard_levels") val standardLevel: List<Float>
 )

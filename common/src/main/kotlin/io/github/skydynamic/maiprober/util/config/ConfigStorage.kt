@@ -10,8 +10,8 @@ import net.mamoe.yamlkt.Comment
 data class ConfigStorage(
     @Comment("代理端口")
     val proxyPort: Int = 2560,
-    @Comment("查分平台 (未来这个设置将会启用)")
-    val platform: ProberPlatform = ProberPlatform.DIVING_FISH,
+    @Comment("查分平台")
+    var platform: ProberPlatform = ProberPlatform.DIVING_FISH,
     @Comment("SecretKey, 用于生成 OAuth Token, 请勿随意改动")
     val secretKey: String = OauthTokenUtil.generateRandomSecretKey(),
     @Comment("水鱼查分器用户名")

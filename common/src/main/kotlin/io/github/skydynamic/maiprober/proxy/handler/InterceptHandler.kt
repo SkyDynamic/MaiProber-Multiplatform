@@ -15,8 +15,8 @@ object InterceptHandler {
     suspend fun onAuthHook(authUrl: URI, config: ConfigStorage) {
         val urlString = authUrl.toString()
         val target = urlString.replace("http", "https")
+        val proberUtil = config.platform.factory
         if (config.platform == ProberPlatform.DIVING_FISH) {
-            val proberUtil = config.platform.factory
             if (proberUtil.validateProberAccount(config.userName, config.password)) {
                 if (target.contains("maimai-dx")) {
                     proberUtil.uploadMaimaiProberData(
@@ -27,6 +27,12 @@ object InterceptHandler {
                 }
             } else {
                 logger.error("Prober账号密码错误")
+            }
+        } else if (config.platform == ProberPlatform.LXNS){
+            if (target.contains("maimai-dx")) {
+                proberUtil.uploadMaimaiProberData(config.token.lxns, target, config.settings.useCache)
+            } else if (target.contains("chunithm")) {
+                proberUtil.uploadChunithmProberData(config.token.lxns, target, config.settings.useCache)
             }
         } else {
             logger.error("暂不支持的Prober平台")

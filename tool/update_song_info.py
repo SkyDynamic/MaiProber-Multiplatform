@@ -6,10 +6,12 @@ client = AsyncClient()
 
 async def update_song_id():
     song_info = []
-    result = await client.get("https://maimai.lxns.net/api/v0/maimai/song/list")
+    result = await client.get("https://maimai.lxns.net/api/v0/maimai/song/list?notes=true")
     for song in result.json()["songs"]:
         dx_difficulties = song["difficulties"]["dx"]
         standard_difficulties = song["difficulties"]["standard"]
+        dx_difficulties_notes = [diff["notes"]["total"] for diff in dx_difficulties]
+        standard_difficulties_notes = [diff["notes"]["total"] for diff in standard_difficulties]
         dx_levels = [difficulty["level_value"] for difficulty in dx_difficulties]
         standard_levels = [difficulty["level_value"] for difficulty in standard_difficulties]
 
@@ -18,6 +20,8 @@ async def update_song_id():
                 "id": song["id"],
                 "title": song["title"],
                 "version": song["version"],
+                "dx_difficulties_notes": dx_difficulties_notes,
+                "standard_difficulties_notes": standard_difficulties_notes,
                 "dx_levels": dx_levels,
                 "standard_levels": standard_levels,
             }

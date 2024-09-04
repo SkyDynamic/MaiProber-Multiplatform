@@ -15,6 +15,8 @@ class MaimaiProberMain {
     private val ctx: ProberContext
     private val instance: Prober
 
+    var isEnable: Boolean = false
+
     init {
         Config.read()
         ctx = object :ProberContext {
@@ -46,11 +48,13 @@ class MaimaiProberMain {
     }
 
     fun start() {
+        isEnable = true
         instance.startProxy()
         instance.join()
     }
 
     fun stop() {
+        isEnable = false
         LOGGER.info("Stop Proxy Server")
         instance.stopProxy()
     }
