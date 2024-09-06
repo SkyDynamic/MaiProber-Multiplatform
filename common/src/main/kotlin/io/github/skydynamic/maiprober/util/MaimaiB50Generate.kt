@@ -512,7 +512,7 @@ fun generateB50(data: MaimaiMusicDetailList, timestamp: Long) {
                 }
             }
             Text(
-                "Generate by MaimaiProber-MultiPlatform | Style by SkyDynamic",
+                "Generate by MaimaiProber-MultiPlatform | Designed by SkyDynamic",
                 alignment = LayoutAlignment.BOTTOM_CENTER,
                 color = Color.BLACK,
                 fontSize = 48.dp
